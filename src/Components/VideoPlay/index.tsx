@@ -40,8 +40,6 @@ interface VideoDetails {
 interface VideoPlayerState {
   fetchedVideo?: VideoDetails;
   embedId: string;
-  liked: boolean;
-  disliked: boolean;
 }
 
 class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
@@ -51,8 +49,6 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
   state: VideoPlayerState = {
     fetchedVideo: undefined,
     embedId: '',
-    liked: false,
-    disliked: false,
   };
 
   fetchData = (): void => {
@@ -73,37 +69,35 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
     this.fetchData();
   }
 
-  handleLike = () => {
-    this.setState((prev) => ({
-      liked: !prev.liked,
-      disliked: prev.liked ? prev.disliked : false, // if liked, remove dislike
-    }));
-  };
-
-  handleDislike = () => {
-    this.setState((prev) => ({
-      disliked: !prev.disliked,
-      liked: prev.disliked ? prev.liked : false, // if disliked, remove like
-    }));
-  };
-
   render(): ReactNode {
     const ctx = this.context;
     if (!ctx) return null;
 
-    const { theme, savedVideos, addVideo, removeVideo } = ctx;
-    const { fetchedVideo, embedId, liked, disliked } = this.state;
+    const {
+      theme,
+      savedVideos,
+      addVideo,
+      removeVideo,
+      videoReactions,
+      toggleLike,
+      toggleDislike,
+    } = ctx;
+    const { fetchedVideo, embedId } = this.state;
 
     if (!fetchedVideo) return null;
 
     const isSaved = savedVideos.some((v) => v.id === fetchedVideo.id);
+    const reaction = videoReactions.find((r) => r.id === fetchedVideo.id) || {
+      liked: false,
+      disliked: false,
+    };
 
     return (
       <VideoPlayerUI
         className={theme === 'light' ? 'light-theme' : 'dark-theme'}
         style={{ display: 'flex', justifyContent: 'center' }}
       >
-        {/* 🎬 YouTube Player */}
+        {/* Video Player */}
         <div>
           <YoutubeVideo
             src={`https://www.youtube.com/embed/${embedId}`}
@@ -112,10 +106,10 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
-          ></YoutubeVideo>
+          />
         </div>
 
-        {/* 📌 Video Info Section */}
+        {/* Info Section */}
         <VideoInfo>
           <VideoTitle>
             <p>{fetchedVideo.title}</p>
@@ -129,15 +123,24 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
                 <p>{fetchedVideo.published_at}</p>
               </VideoCountPub>
 
-              {/* 👍👎 Save Buttons */}
               <VideoLikeDisLikeSave>
-                <div onClick={this.handleLike} style={{ cursor: 'pointer' }}>
-                  <BiLike color={liked ? 'blue' : 'inherit'} />{' '}
-                  <b style={{ color: liked ? 'blue' : 'inherit' }}>Like</b>
+                <div
+                  onClick={() => toggleLike(fetchedVideo.id)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <BiLike color={reaction.liked ? 'blue' : 'inherit'} />
+                  <b style={{ color: reaction.liked ? 'blue' : 'inherit' }}>
+                    Like
+                  </b>
                 </div>
-                <div onClick={this.handleDislike} style={{ cursor: 'pointer' }}>
-                  <BiDislike color={disliked ? 'red' : 'inherit'} />{' '}
-                  <b style={{ color: disliked ? 'red' : 'inherit' }}>Dislike</b>
+                <div
+                  onClick={() => toggleDislike(fetchedVideo.id)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <BiDislike color={reaction.disliked ? 'red' : 'inherit'} />
+                  <b style={{ color: reaction.disliked ? 'red' : 'inherit' }}>
+                    Dislike
+                  </b>
                 </div>
                 <div
                   onClick={() =>
@@ -157,7 +160,6 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
 
             <HorizontalLine />
 
-            {/* 📢 Channel Info */}
             <VideoDescription>
               <ChannelLogoBox>
                 <img src={fetchedVideo.channel.profile_image_url} />
