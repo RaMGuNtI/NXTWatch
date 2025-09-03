@@ -1,5 +1,5 @@
-import { makeAutoObservable } from 'mobx';
-
+import { makeObservable, flow, observable, action } from 'mobx';
+import Cookies from 'js-cookie';
 interface Video {
   channel: { name: string; profile_image_url: string };
   id: string;
@@ -19,7 +19,36 @@ class HomeStore {
   loader: boolean = true;
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      searchInput: observable,
+      fetchedVideos: observable,
+      loader: observable,
+      setSearchInput: action,
+      setFetchedVideos: action,
+      setLoader: action,
+      getvideos: flow,
+    });
+  }
+
+  *getvideos(): Generator<Promise<Response>, void, unknown> {
+    this.setLoader(true);
+    try {
+      const response = (yield fetch(
+        `https://apis.ccbp.in/videos/all?search=${this.searchInput}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${Cookies.get('Token')}`,
+          },
+        }
+      )) as Response;
+      const data = yield response.json();
+      this.setFetchedVideos(data as FetchedVideos);
+    } catch (error) {
+      console.error('Failed to fetch Videos:', error);
+    } finally {
+      this.setLoader(false);
+    }
   }
 
   setSearchInput(text: string): void {

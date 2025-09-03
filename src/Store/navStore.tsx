@@ -11,8 +11,8 @@ class NavStore {
   constructor() {
     makeAutoObservable(this);
   }
-  setIsStarted():void{
-    this.isStarted = false
+  setIsStarted(): void {
+    this.isStarted = false;
   }
   setPanel() {
     this.panel = !this.panel;

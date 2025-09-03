@@ -8,7 +8,7 @@ import {
   NotFound,
   VideosSection,
 } from './styledComp';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import IndividualVideo from '../IndividualVideo';
 import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
@@ -20,21 +20,22 @@ class HomePage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
 
-  fetchData = (): void => {
-    homeStore.setLoader(true);
-    fetch(`https://apis.ccbp.in/videos/all?search=${homeStore.searchInput}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        homeStore.setFetchedVideos(res);
-        homeStore.setLoader(false);
-      });
-  };
+  // fetchData = (): void => {
+  //   homeStore.setLoader(true);
+  //   fetch(`https://apis.ccbp.in/videos/all?search=${homeStore.searchInput}`, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       homeStore.setFetchedVideos(res);
+  //       homeStore.setLoader(false);
+  //     });
+  // };
 
   componentDidMount(): void {
-    this.fetchData();
+    // this.fetchData();
+    homeStore.getvideos();
   }
 
   renderHomePage = () => {
@@ -59,7 +60,7 @@ class HomePage extends Component {
                 homeStore.setSearchInput(e.target.value)
               }
             />
-            <button onClick={this.fetchData}>🔍</button>
+            <button onClick={()=>homeStore.getvideos()}>🔍</button>
           </InputSection>
           <div>
             {homeStore.fetchedVideos?.videos.length === 0 ? (
