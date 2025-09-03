@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const BannerBox = styled.div<{ visible: boolean }>`
+export const BannerBox = styled.div<{ visible?: boolean }>`
   background-image: url('https://assets.ccbp.in/frontend/react-js/nxt-watch-banner-bg.png');
   background-size: cover;
   height: 200px;

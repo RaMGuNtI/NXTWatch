@@ -5,7 +5,7 @@ import App from './App.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import { AppProvider } from './Context/ThemeSaveContext.tsx';
 createRoot(document.getElementById('root')!).render(
-  <div className='asd'>
+  <div className="asd">
     <StrictMode>
       <BrowserRouter>
         <AppProvider>

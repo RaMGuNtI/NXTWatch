@@ -7,7 +7,6 @@ import { HiFire } from 'react-icons/hi';
 class SavedVideos extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
-
   render() {
     const ctx = this.context;
     if (!ctx) return null;

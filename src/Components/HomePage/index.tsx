@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react';
 import { Component } from 'react';
 import BannerAd from '../BannerAd';
 import {
@@ -11,40 +12,24 @@ import Cookies from 'js-cookie';
 import IndividualVideo from '../IndividualVideo';
 import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
-interface HomePageStates {
-  searchInput: string;
-  fetchedVideos:
-    | {
-        videos: {
-          channel: { name: string; profile_image_url: string };
-          id: string;
-          published_at: string;
-          thumbnail_url: string;
-          title: string;
-          view_count: string;
-        }[];
-      }
-    | undefined;
-  loader: boolean;
-}
 
+import { homeStore } from '../../Store/homeStore';
+
+// @observer
 class HomePage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
-  state: HomePageStates = {
-    searchInput: '',
-    fetchedVideos: undefined,
-    loader: true,
-  };
 
   fetchData = (): void => {
-    fetch(`https://apis.ccbp.in/videos/all?search=${this.state.searchInput}`, {
+    homeStore.setLoader(true);
+    fetch(`https://apis.ccbp.in/videos/all?search=${homeStore.searchInput}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
     })
       .then((res) => res.json())
       .then((res) => {
-        this.setState({ fetchedVideos: res, loader: false });
+        homeStore.setFetchedVideos(res);
+        homeStore.setLoader(false);
       });
   };
 
@@ -69,25 +54,24 @@ class HomePage extends Component {
           <InputSection>
             <input
               placeholder="Search"
-              value={this.state.searchInput}
+              value={homeStore.searchInput}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                this.setState({ searchInput: e.target.value })
+                homeStore.setSearchInput(e.target.value)
               }
             />
             <button onClick={this.fetchData}>🔍</button>
           </InputSection>
           <div>
-            {this.state.fetchedVideos?.videos.length == 0 ? (
+            {homeStore.fetchedVideos?.videos.length === 0 ? (
               <NotFound>
                 <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png" />
                 <h1>No Results Found</h1>
               </NotFound>
             ) : (
               <DisplayVideos>
-                {this.state.fetchedVideos &&
-                  this.state.fetchedVideos.videos.map((video) => {
-                    return <IndividualVideo key={video.id} video={video} />;
-                  })}
+                {homeStore.fetchedVideos?.videos.map((video) => (
+                  <IndividualVideo key={video.id} video={video} />
+                ))}
               </DisplayVideos>
             )}
           </div>
@@ -97,8 +81,9 @@ class HomePage extends Component {
   };
 
   render() {
-    return this.state.loader ? <Loader /> : this.renderHomePage();
+    return homeStore.loader ? <Loader /> : this.renderHomePage();
   }
 }
 
-export default HomePage;
+// eslint-disable-next-line react-refresh/only-export-components
+export default observer(HomePage);

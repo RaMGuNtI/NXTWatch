@@ -64,7 +64,7 @@ export class AppProvider extends Component<AppProviderProps, AppProviderState> {
 
   addVideo = (video: SavedVideo) => {
     this.setState((prev) => ({
-      savedVideos: [...prev.savedVideos, video],
+      savedVideos: [...prev.savedVideos, video],  
     }));
   };
 

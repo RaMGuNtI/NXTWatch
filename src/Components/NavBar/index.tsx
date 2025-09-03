@@ -19,6 +19,7 @@ import { SiYoutubegaming } from 'react-icons/si';
 import { CatVideoSection, SepCatVideo } from '../LeftPanel/styledComp';
 // import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { navStore } from '../../Store/navStore';
 
 interface NavBarState {
   panel: boolean;
@@ -31,18 +32,13 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
 
-  state: NavBarState = {
-    panel: false,
-    activeTab: '',
-  };
-
   logout = () => {
     Cookies.remove('Token');
     this.props.navigate('/login');
   };
 
   showPanel = () => {
-    this.setState((prev) => ({ panel: !prev.panel }));
+    navStore.setPanel();
   };
 
   renderPanel = () => {
@@ -96,7 +92,7 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
           }}
           active={this.props.location.pathname === '/saved-videos'}
           onClick={() => {
-            this.setState({ activeTab: 'SavedVideo' });
+            navStore.setActiveTab('SavedVideo');
             this.props.navigate('/saved-videos');
           }}
         >
@@ -174,7 +170,7 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
           </NavRight>
         </NavBarBox>
 
-        {this.state.panel ? this.renderPanel() : null}
+        {navStore.panel ? this.renderPanel() : null}
       </div>
     );
   }

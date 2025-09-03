@@ -62,7 +62,6 @@ class LoginPage extends Component<WithNavigationProps> {
         if (res.status_code === 400) {
           this.setState({ showError: res.error_msg });
         } else {
-          console.log(res);
           Cookies.set('Token', res.jwt_token);
           this.props.navigate('/');
         }

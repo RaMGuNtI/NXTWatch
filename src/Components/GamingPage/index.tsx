@@ -9,35 +9,22 @@ import {
 } from './styledComp';
 import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
-interface GamingPageStates {
-  fetchedVideos:
-    | {
-        videos: {
-          id: string;
-          thumbnail_url: string;
-          title: string;
-          view_count: string;
-        }[];
-      }
-    | undefined;
-  loader: boolean;
-}
+import { gameStore } from '../../Store/gamingStore';
+import { observer } from 'mobx-react';
 
 class GamingPage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
-  state: GamingPageStates = {
-    fetchedVideos: undefined,
-    loader: true,
-  };
   fetchData = (): void => {
+    gameStore.setLoader(true);
     fetch(`https://apis.ccbp.in/videos/gaming`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
     })
       .then((res) => res.json())
       .then((res) => {
-        this.setState({ fetchedVideos: res, loader: false });
+        gameStore.setFetchedVideos(res);
+        gameStore.setLoader(false);
       });
   };
 
@@ -61,8 +48,8 @@ class GamingPage extends Component {
           <h1>Gaming</h1>
         </PageSectionName>
         <DisplayGamingVideos>
-          {this.state.fetchedVideos &&
-            this.state.fetchedVideos.videos.map((each) => {
+          {gameStore.fetchedVideos &&
+            gameStore.fetchedVideos.videos.map((each) => {
               return <IndividualGaming game={each} />;
             })}
         </DisplayGamingVideos>
@@ -71,8 +58,9 @@ class GamingPage extends Component {
   };
 
   render() {
-    return this.state.loader ? <Loader /> : this.renderGamingPage();
+    return gameStore.loader ? <Loader /> : this.renderGamingPage();
   }
 }
 
-export default GamingPage;
+// eslint-disable-next-line react-refresh/only-export-components
+export default observer(GamingPage);
