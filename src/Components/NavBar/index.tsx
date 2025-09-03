@@ -6,8 +6,11 @@ import {
   ProfileBox,
   LogoutBut,
   HamBurger,
-  // PopUPStyle,
-  // CancelBtn,
+  TimerBox,
+  SmallLogout,
+  ShowingTimerBox,
+  UpdateTimeBox,
+  TimerBtn,
 } from './styledComp';
 import Cookies from 'js-cookie';
 import { type WithNavigationProps, withNavigation } from '../../withNavigation';
@@ -17,10 +20,12 @@ import { CiSaveDown2 } from 'react-icons/ci';
 import { FaHome, FaFire } from 'react-icons/fa';
 import { SiYoutubegaming } from 'react-icons/si';
 import { CatVideoSection, SepCatVideo } from '../LeftPanel/styledComp';
-// import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { navStore } from '../../Store/navStore';
-
+import { IoTimer } from 'react-icons/io5';
+import { MdDarkMode, MdOutlineLightMode } from 'react-icons/md';
+import { observer } from 'mobx-react';
+import { IoLogOutSharp } from 'react-icons/io5';
 interface NavBarState {
   panel: boolean;
   activeTab?: string;
@@ -49,56 +54,45 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
 
     return (
       <CatVideoSection>
-        <SepCatVideo
-          style={{
-            backgroundColor: theme === 'light' ? '' : '#242424',
-            color: theme === 'light' ? '' : '#fff',
-          }}
-          active={this.props.location.pathname === '/'}
-          onClick={() => this.props.navigate('/')}
-        >
-          <FaHome style={{ color: 'red' }} />
-          <p>Home</p>
-        </SepCatVideo>
-
-        <SepCatVideo
-          style={{
-            backgroundColor: theme === 'light' ? '' : '#242424',
-            color: theme === 'light' ? '' : '#fff',
-          }}
-          active={this.props.location.pathname === '/trending'}
-          onClick={() => this.props.navigate('/trending')}
-        >
-          <FaFire style={{ color: 'red' }} />
-          <p>Trending</p>
-        </SepCatVideo>
-
-        <SepCatVideo
-          style={{
-            backgroundColor: theme === 'light' ? '' : '#242424',
-            color: theme === 'light' ? '' : '#fff',
-          }}
-          active={this.props.location.pathname === '/gaming'}
-          onClick={() => this.props.navigate('/gaming')}
-        >
-          <SiYoutubegaming style={{ color: 'red' }} />
-          <p>Gaming</p>
-        </SepCatVideo>
-
-        <SepCatVideo
-          style={{
-            backgroundColor: theme === 'light' ? '' : '#242424',
-            color: theme === 'light' ? '' : '#fff',
-          }}
-          active={this.props.location.pathname === '/saved-videos'}
-          onClick={() => {
-            navStore.setActiveTab('SavedVideo');
-            this.props.navigate('/saved-videos');
-          }}
-        >
-          <CiSaveDown2 style={{ color: 'red', fontWeight: 'bold' }} />
-          <p>Saved Videos</p>
-        </SepCatVideo>
+        {[
+          {
+            icon: <FaHome style={{ color: 'red' }} />,
+            label: 'Home',
+            path: '/',
+          },
+          {
+            icon: <FaFire style={{ color: 'red' }} />,
+            label: 'Trending',
+            path: '/trending',
+          },
+          {
+            icon: <SiYoutubegaming style={{ color: 'red' }} />,
+            label: 'Gaming',
+            path: '/gaming',
+          },
+          {
+            icon: <CiSaveDown2 style={{ color: 'red', fontWeight: 'bold' }} />,
+            label: 'Saved Videos',
+            path: '/saved-videos',
+          },
+        ].map((item) => (
+          <SepCatVideo
+            key={item.label}
+            style={{
+              backgroundColor: theme === 'light' ? '' : '#242424',
+              color: theme === 'light' ? '' : '#fff',
+            }}
+            active={this.props.location.pathname === item.path}
+            onClick={() => {
+              if (item.path === '/saved-videos')
+                navStore.setActiveTab('SavedVideo');
+              this.props.navigate(item.path);
+            }}
+          >
+            {item.icon}
+            <p>{item.label}</p>
+          </SepCatVideo>
+        ))}
       </CatVideoSection>
     );
   };
@@ -124,6 +118,25 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   //     </Popup>
   //   );
   // };
+
+  startTimer = () => {
+    const TimerKey = setInterval(() => navStore.minusTimer(), 60000);
+    navStore.setTimerKey(TimerKey);
+  };
+
+  componentDidUpdate(): void {
+    if (navStore.timerStartNum === 0) {
+      navStore.setTimerStartNum();
+      navStore.setIsStarted();
+      this.logout();
+    }
+  }
+
+  componentWillUnmount(): void {
+    if (navStore.timerKey !== null) {
+      clearInterval(navStore.timerKey);
+    }
+  }
 
   render(): ReactNode {
     const ctx = this.context;
@@ -151,8 +164,36 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
           </NavLogo>
 
           <NavRight>
-            <div onClick={toggleTheme} style={{ cursor: 'pointer' }}>
-              {theme === 'light' ? '🌛' : '☀️'}
+            <TimerBox>
+              <IoTimer onClick={() => navStore.setShowTimerBox()} />
+              {navStore.showTimerBox && (
+                <ShowingTimerBox>
+                  <p style={{ margin: 0, fontSize: '15px' }}>Set Break Time</p>
+                  <UpdateTimeBox>
+                    <p onClick={() => navStore.decrementTime()}>➖</p>
+                    <h5>{navStore.time} min</h5>
+                    <p onClick={() => navStore.incrementTime()}>➕</p>
+                  </UpdateTimeBox>
+                  <div>
+                    <TimerBtn
+                      style={{ fontSize: '20px', color: 'white' }}
+                      onClick={() => {
+                        navStore.startTimer();
+                        this.startTimer();
+                      }}
+                    >
+                      {navStore.isStarted ? 'Started' : 'Start'}
+                    </TimerBtn>
+                  </div>
+                </ShowingTimerBox>
+              )}
+            </TimerBox>
+
+            <div
+              onClick={toggleTheme}
+              style={{ cursor: 'pointer', fontSize: '25px' }}
+            >
+              {theme === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
             </div>
 
             <HamBurger>
@@ -166,6 +207,9 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
               />
             </ProfileBox>
             <LogoutBut onClick={this.logout}>Logout</LogoutBut>
+            <SmallLogout>
+              <IoLogOutSharp onClick={this.logout} />
+            </SmallLogout>
             {/* <div>{this.renderPopUp()}</div> */}
           </NavRight>
         </NavBarBox>
@@ -176,5 +220,6 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   }
 }
 
-const NavBar = withNavigation(NavBarComp);
-export default NavBar;
+// const NavBar = withNavigation(NavBarComp);
+// eslint-disable-next-line react-refresh/only-export-components
+export default withNavigation(observer(NavBarComp));
