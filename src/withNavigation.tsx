@@ -11,7 +11,7 @@ export interface WithNavigationProps {
   param: Readonly<Params<string>>;
 }
 
-export function withNavigation<P extends object>(
+export function withNavigation<P>(
   Component: React.ComponentType<P & WithNavigationProps>
 ) {
   return function WrappedComponent(props: P) {

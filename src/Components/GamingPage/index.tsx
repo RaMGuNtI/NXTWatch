@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { IoGameController } from 'react-icons/io5';
 import IndividualGaming from '../IndividualGaming';
 import {
@@ -15,22 +15,32 @@ import { observer } from 'mobx-react';
 class GamingPage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
-  fetchData = (): void => {
-    gameStore.setLoader(true);
-    fetch(`https://apis.ccbp.in/videos/gaming`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        gameStore.setFetchedVideos(res);
-        gameStore.setLoader(false);
-      });
-  };
+  // fetchData = (): void => {
+  //   gameStore.setLoader(true);
+  //   fetch(`https://apis.ccbp.in/videos/gaming`, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       gameStore.setFetchedVideos(res);
+  //       gameStore.setLoader(false);
+  //     });
+  // };
 
   componentDidMount(): void {
-    this.fetchData();
+    // this.fetchData();
+    gameStore.getvideos();
   }
+
+  renderDisplayVideos = () => (
+    <DisplayGamingVideos>
+      {gameStore.fetchedVideos &&
+        gameStore.fetchedVideos.videos.map((each) => {
+          return <IndividualGaming game={each} />;
+        })}
+    </DisplayGamingVideos>
+  );
 
   renderGamingPage = () => {
     const ctx = this.context;
@@ -47,12 +57,7 @@ class GamingPage extends Component {
           <IoGameController style={{ fontSize: '50px', color: 'red' }} />
           <h1>Gaming</h1>
         </PageSectionName>
-        <DisplayGamingVideos>
-          {gameStore.fetchedVideos &&
-            gameStore.fetchedVideos.videos.map((each) => {
-              return <IndividualGaming game={each} />;
-            })}
-        </DisplayGamingVideos>
+        {this.renderDisplayVideos()}
       </GamePageBox>
     );
   };

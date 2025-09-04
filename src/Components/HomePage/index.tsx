@@ -12,7 +12,6 @@ import {
 import IndividualVideo from '../IndividualVideo';
 import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
-
 import { homeStore } from '../../Store/homeStore';
 
 // @observer
@@ -38,11 +37,25 @@ class HomePage extends Component {
     homeStore.getvideos();
   }
 
+  renderNotFound = () => (
+    <NotFound>
+      <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png" />
+      <h1>No Results Found</h1>
+    </NotFound>
+  );
+
+  renderDisplayVideos = () => (
+    <DisplayVideos>
+      {homeStore.fetchedVideos?.videos.map((video) => (
+        <IndividualVideo key={video.id} video={video} />
+      ))}
+    </DisplayVideos>
+  );
+
   renderHomePage = () => {
     const ctx = this.context;
     if (!ctx) return null;
     const { theme } = ctx;
-
     return (
       <HomePageBox>
         <BannerAd />
@@ -60,21 +73,12 @@ class HomePage extends Component {
                 homeStore.setSearchInput(e.target.value)
               }
             />
-            <button onClick={()=>homeStore.getvideos()}>🔍</button>
+            <button onClick={() => homeStore.getvideos()}>🔍</button>
           </InputSection>
           <div>
-            {homeStore.fetchedVideos?.videos.length === 0 ? (
-              <NotFound>
-                <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png" />
-                <h1>No Results Found</h1>
-              </NotFound>
-            ) : (
-              <DisplayVideos>
-                {homeStore.fetchedVideos?.videos.map((video) => (
-                  <IndividualVideo key={video.id} video={video} />
-                ))}
-              </DisplayVideos>
-            )}
+            {homeStore.fetchedVideos?.videos.length === 0
+              ? this.renderNotFound()
+              : this.renderDisplayVideos()}
           </div>
         </VideosSection>
       </HomePageBox>

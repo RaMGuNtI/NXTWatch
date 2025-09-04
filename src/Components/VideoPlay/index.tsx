@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from 'react';
 import { type WithNavigationProps, withNavigation } from '../../withNavigation';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { BiLike, BiDislike } from 'react-icons/bi';
 import { HiOutlineSaveAs } from 'react-icons/hi';
 import { LuDot } from 'react-icons/lu';
@@ -21,6 +21,8 @@ import {
   YoutubeVideo,
 } from './styledComp';
 import { AppContext } from '../../Context/ThemeSaveContext';
+import { videoPlayStore } from '../../Store/videoPlayStore';
+import { observer } from 'mobx-react';
 
 interface VideoDetails {
   channel: {
@@ -46,27 +48,28 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
 
-  state: VideoPlayerState = {
-    fetchedVideo: undefined,
-    embedId: '',
-  };
+  // state: VideoPlayerState = {
+  //   fetchedVideo: undefined,
+  //   embedId: '',
+  // };
 
-  fetchData = (): void => {
-    fetch(`https://apis.ccbp.in/videos/${this.props.param.id}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.setState({
-          fetchedVideo: res.video_details,
-          embedId: res.video_details.video_url.split('=')[1],
-        });
-      });
-  };
+  // fetchData = (): void => {
+  //   fetch(`https://apis.ccbp.in/videos/${this.props.param.id}`, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       this.setState({
+  //         fetchedVideo: res.video_details,
+  //         embedId: res.video_details.video_url.split('=')[1],
+  //       });
+  //     });
+  // };
 
   componentDidMount(): void {
-    this.fetchData();
+    // this.fetchData();
+    videoPlayStore.getvideos(this.props.param.id);
   }
 
   render(): ReactNode {
@@ -82,7 +85,8 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
       toggleLike,
       toggleDislike,
     } = ctx;
-    const { fetchedVideo, embedId } = this.state;
+    const { fetchedVideo, embedId } = videoPlayStore;
+    // const { fetchedVideo, embedId } = this.state;
 
     if (!fetchedVideo) return null;
 
@@ -183,5 +187,5 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
   }
 }
 
-const VideoPlay = withNavigation(VideoPlayer);
+const VideoPlay = withNavigation(observer(VideoPlayer));
 export default VideoPlay;
