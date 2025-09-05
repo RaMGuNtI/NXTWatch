@@ -7,7 +7,7 @@ import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
 import { trendStore } from '../../Store/trendStore';
 import { observer } from 'mobx-react';
-
+import { ThemeProvider } from 'styled-components';
 class TrendingPage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
@@ -30,16 +30,8 @@ class TrendingPage extends Component {
     trendStore.getvideos();
   }
   renderTrendingPage = () => {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
     return (
-      <TrendingPageUI
-        style={{
-          backgroundColor: theme === 'light' ? '#fff' : '#181818',
-          color: theme === 'light' ? '#000' : '#fff',
-        }}
-      >
+      <TrendingPageUI>
         <PageSectionName>
           <HiFire color="red" style={{ fontSize: '50px' }} />
           <h1>Trending</h1>
@@ -54,7 +46,14 @@ class TrendingPage extends Component {
     );
   };
   render() {
-    return trendStore.loader ? <Loader /> : this.renderTrendingPage();
+    const ctx = this.context;
+    if (!ctx) return null;
+    const { theme } = ctx;
+    return (
+      <ThemeProvider theme={{ mode: theme }}>
+        {trendStore.loader ? <Loader /> : this.renderTrendingPage()}
+      </ThemeProvider>
+    );
   }
 }
 

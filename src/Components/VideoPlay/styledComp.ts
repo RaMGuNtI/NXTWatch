@@ -8,6 +8,10 @@ export const VideoPlayerUI = styled.div`
   overflow-x: hidden;
 `;
 
+export const YoutubeVideoDiv = styled.div`
+margin-left: 10px;
+`
+
 export const YoutubeVideo = styled.iframe`
   width: 75vw;
   height: 60vh;
@@ -71,6 +75,7 @@ export const HorizontalLine = styled.hr`
 export const VideoDescription = styled.div`
   display: flex;
   align-items: flex-start;
+  margin-left: 10px;
   * {
     margin-right: 10px;
   }

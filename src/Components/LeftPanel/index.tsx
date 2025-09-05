@@ -34,7 +34,7 @@ class LeftPanel extends Component<WithNavigationProps> {
               backgroundColor: theme === 'light' ? '' : '#242424',
               color: theme === 'light' ? '' : '#fff',
             }}
-            active={this.props.location.pathname === '/'}
+            $active={this.props.location.pathname === '/'}
             onClick={() => {
               this.props.navigate('/');
             }}
@@ -47,7 +47,7 @@ class LeftPanel extends Component<WithNavigationProps> {
               backgroundColor: theme === 'light' ? '' : '#242424',
               color: theme === 'light' ? '' : '#fff',
             }}
-            active={this.props.location.pathname === '/trending'}
+            $active={this.props.location.pathname === '/trending'}
             onClick={() => {
               this.props.navigate('/trending');
             }}
@@ -60,7 +60,7 @@ class LeftPanel extends Component<WithNavigationProps> {
               backgroundColor: theme === 'light' ? '' : '#242424',
               color: theme === 'light' ? '' : '#fff',
             }}
-            active={this.props.location.pathname === '/gaming'}
+            $active={this.props.location.pathname === '/gaming'}
             onClick={() => {
               this.props.navigate('/gaming');
             }}
@@ -73,7 +73,7 @@ class LeftPanel extends Component<WithNavigationProps> {
               backgroundColor: theme === 'light' ? '' : '#242424',
               color: theme === 'light' ? '' : '#fff',
             }}
-            active={this.props.location.pathname === '/saved-videos'}
+            $active={this.props.location.pathname === '/saved-videos'}
             onClick={() => {
               this.setState({ activeTab: 'SavedVideo' });
               this.props.navigate('/saved-videos');

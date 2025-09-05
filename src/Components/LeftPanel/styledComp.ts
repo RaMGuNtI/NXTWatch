@@ -1,5 +1,15 @@
 import styled from 'styled-components';
 
+export const light = styled.div`
+  background-color: #fff;
+  color: black;
+`;
+
+export const dark = styled.div`
+  background-color: #242424;
+  color: white;
+`;
+
 export const LeftPanelBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,14 +27,15 @@ export const CatVideoSection = styled.div`
   padding-top: 10px;
 `;
 
-export const SepCatVideo = styled.div<{ active?: boolean }>`
+export const SepCatVideo = styled.div<{ $active?: boolean }>`
   display: flex;
   align-items: center;
   padding: 2px;
-  width: 100%;
+  width: 99%;
   align-items: center;
-  background-color: ${(props) => (props.active ? 'gray' : 'white')};
-  font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
+  background-color: ${(props) => (props.$active ? '#585858ff' : 'white')};
+  color: ${(props) => (props.$active ? 'white' : 'black')};
+  font-weight: ${(props) => (props.$active ? 'bold' : 'normal')};
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: pointer;

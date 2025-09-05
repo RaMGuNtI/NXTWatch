@@ -11,6 +11,7 @@ import {
 import Loader from '../Loader/Loader';
 import IndividualVideo from '../IndividualVideo';
 import { AppContext } from '../../Context/ThemeSaveContext';
+import { ThemeProvider } from 'styled-components';
 interface Video {
   channel: { name: string; profile_image_url: string };
   id: string;
@@ -70,28 +71,25 @@ const HomePage = () => {
     return (
       <HomePageBox>
         <BannerAd />
-        <VideosSection
-          style={{
-            backgroundColor: theme === 'light' ? '' : '#181818',
-            color: theme === 'light' ? '#000' : '#fff',
-          }}
-        >
-          <InputSection>
-            <input
-              placeholder="Search"
-              value={searchInput}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSearchInput(e.target.value)
-              }
-            />
-            <button onClick={() => fetchVideos()}>🔍</button>
-          </InputSection>
-          <div>
-            {fetchedVideos?.videos.length === 0
-              ? renderNotFound()
-              : renderDisplayVideos()}
-          </div>
-        </VideosSection>
+        <ThemeProvider theme={{ mode: theme }}>
+          <VideosSection>
+            <InputSection>
+              <input
+                placeholder="Search"
+                value={searchInput}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchInput(e.target.value)
+                }
+              />
+              <button onClick={() => fetchVideos()}>🔍</button>
+            </InputSection>
+            <div>
+              {fetchedVideos?.videos.length === 0
+                ? renderNotFound()
+                : renderDisplayVideos()}
+            </div>
+          </VideosSection>
+        </ThemeProvider>
       </HomePageBox>
     );
   };

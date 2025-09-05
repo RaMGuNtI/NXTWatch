@@ -19,6 +19,7 @@ import {
   VideoPlayerUI,
   VideoTitle,
   YoutubeVideo,
+  YoutubeVideoDiv,
 } from './styledComp';
 import { AppContext } from '../../Context/ThemeSaveContext';
 import { videoPlayStore } from '../../Store/videoPlayStore';
@@ -102,7 +103,7 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
         style={{ display: 'flex', justifyContent: 'center' }}
       >
         {/* Video Player */}
-        <div>
+        <YoutubeVideoDiv>
           <YoutubeVideo
             src={`https://www.youtube.com/embed/${embedId}`}
             title="YouTube video player"
@@ -111,7 +112,7 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
           />
-        </div>
+        </YoutubeVideoDiv>
 
         {/* Info Section */}
         <VideoInfo>
