@@ -1,5 +1,15 @@
 import styled from 'styled-components';
 
+export const light = styled.div`
+  background-color: white;
+  color: black;
+`;
+
+export const dark = styled.div`
+  background-color: #181818;
+  color: white;
+`;
+
 export const HomePageBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,7 +24,6 @@ export const HomePageBox = styled.div`
 export const VideosSection = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: #e7e7e7;
 `;
 
 export const InputSection = styled.div`

@@ -2,6 +2,8 @@ import { Component, type ReactNode } from 'react';
 import { GameInfo, GamingBoxUI, GamingImage } from './styledComp';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../../Context/ThemeSaveContext';
+// import { ThemeProvider } from 'styled-components';
+// import { light, dark } from './styledComp';
 interface IndividualGamingProps {
   game: {
     id: string;
@@ -20,13 +22,13 @@ class IndividualGaming extends Component<IndividualGamingProps> {
     const { theme } = ctx;
     const { game } = this.props;
     return (
+      // <ThemeProvider theme={theme ? dark : light}>
       <Link
         to={`/videos/${game.id}`}
         style={{ textDecoration: 'none', color: 'black' }}
       >
         <GamingBoxUI
           style={{
-            backgroundColor: theme === 'light' ? '#fff' : '#181818',
             color: theme === 'light' ? '#000' : '#fff',
           }}
         >
@@ -39,8 +41,11 @@ class IndividualGaming extends Component<IndividualGamingProps> {
           </GameInfo>
         </GamingBoxUI>
       </Link>
+      // </ThemeProvider>
     );
   }
 }
+
+// ThemeProvider is not working if link is tag is present
 
 export default IndividualGaming;

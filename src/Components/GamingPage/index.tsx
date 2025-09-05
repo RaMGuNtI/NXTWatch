@@ -11,7 +11,7 @@ import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
 import { gameStore } from '../../Store/gamingStore';
 import { observer } from 'mobx-react';
-
+import { ThemeProvider } from 'styled-components';
 class GamingPage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
@@ -36,23 +36,15 @@ class GamingPage extends Component {
   renderDisplayVideos = () => (
     <DisplayGamingVideos>
       {gameStore.fetchedVideos &&
-        gameStore.fetchedVideos.videos.map((each) => {
-          return <IndividualGaming game={each} />;
+        gameStore.fetchedVideos.videos.map((each, idx) => {
+          return <IndividualGaming key={idx} game={each} />;
         })}
     </DisplayGamingVideos>
   );
 
   renderGamingPage = () => {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
     return (
-      <GamePageBox
-        style={{
-          backgroundColor: theme === 'light' ? '#fff' : '#181818',
-          color: theme === 'light' ? '#000' : '#fff',
-        }}
-      >
+      <GamePageBox>
         <PageSectionName>
           <IoGameController style={{ fontSize: '50px', color: 'red' }} />
           <h1>Gaming</h1>
@@ -63,7 +55,13 @@ class GamingPage extends Component {
   };
 
   render() {
-    return gameStore.loader ? <Loader /> : this.renderGamingPage();
+    const ctx = this.context;
+    if (!ctx) return null;
+    return (
+      <ThemeProvider theme={{ mode: ctx?.theme }}>
+        {gameStore.loader ? <Loader /> : this.renderGamingPage()}
+      </ThemeProvider>
+    );
   }
 }
 
