@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { HiFire } from 'react-icons/hi';
 import IndividualTrendingVideo from '../IndividualTrendingVideo';
 import { PageSectionName, TrendingPageUI } from './styledComp';
@@ -12,21 +12,22 @@ class TrendingPage extends Component {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
 
-  fetchData = (): void => {
-    trendStore.setLoader(true);
-    fetch(`https://apis.ccbp.in/videos/trending`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        trendStore.setFetchedVideos(res);
-        trendStore.setLoader(false);
-      });
-  };
+  // fetchData = (): void => {
+  //   trendStore.setLoader(true);
+  //   fetch(`https://apis.ccbp.in/videos/trending`, {
+  //     method: 'GET',
+  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       trendStore.setFetchedVideos(res);
+  //       trendStore.setLoader(false);
+  //     });
+  // };
 
   componentDidMount(): void {
-    this.fetchData();
+    // this.fetchData();
+    trendStore.getvideos();
   }
   renderTrendingPage = () => {
     const ctx = this.context;
