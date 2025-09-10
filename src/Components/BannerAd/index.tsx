@@ -16,7 +16,8 @@ class BannerAd extends Component {
         style={{
           color: '#000',
         }}
-        visible={this.state.visible}
+        visible={this.state.visible.toString()}
+        data-testid="banner"
       >
         <BannerContent>
           <BannerLeftPart>
@@ -33,6 +34,7 @@ class BannerAd extends Component {
               }))
             }
             style={{ cursor: 'pointer' }}
+            data-testid="close-btn"
           >
             ✖️
           </div>

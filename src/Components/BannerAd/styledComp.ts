@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-export const BannerBox = styled.div<{ visible?: boolean }>`
+export const BannerBox = styled.div<{ visible?: string }>`
   background-image: url('https://assets.ccbp.in/frontend/react-js/nxt-watch-banner-bg.png');
   background-size: cover;
   height: 200px;
   width: 97%;
-  display: ${(props) => (props.visible ? 'flex' : 'none')};
+  display: ${(props) => (props.visible === 'true' ? 'flex' : 'none')};
   flex-direction: row;
   justify-content: space-between;
   padding: 10px;
