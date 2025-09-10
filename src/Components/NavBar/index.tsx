@@ -82,7 +82,7 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
               backgroundColor: theme === 'light' ? '' : '#242424',
               color: theme === 'light' ? '' : '#fff',
             }}
-            active={this.props.location.pathname === item.path}
+            $active={this.props.location.pathname === item.path}
             onClick={() => {
               if (item.path === '/saved-videos')
                 navStore.setActiveTab('SavedVideo');

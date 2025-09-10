@@ -1,5 +1,3 @@
-import { useContext, useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
 import BannerAd from '../BannerAd';
 import {
   DisplayVideos,
@@ -10,8 +8,13 @@ import {
 } from './styledComp';
 import Loader from '../Loader/Loader';
 import IndividualVideo from '../IndividualVideo';
+// import { observer } from 'mobx-react';
+// import { Component } from 'react';
 import { AppContext } from '../../Context/ThemeSaveContext';
+// import { homeStore } from '../../Store/homeStore';
 import { ThemeProvider } from 'styled-components';
+import { useState, useEffect, useContext } from 'react';
+import Cookies from 'js-cookie';
 interface Video {
   channel: { name: string; profile_image_url: string };
   id: string;
@@ -66,14 +69,14 @@ const HomePage = () => {
   );
 
   const renderHomePage = () => {
-    if (!ctx) return null;
+    if (!ctx) return <div data-testid="ctx">theme not defined</div>;
     const { theme } = ctx;
     return (
       <HomePageBox>
-        <BannerAd />
+        <BannerAd data-testid="banner" />
         <ThemeProvider theme={{ mode: theme }}>
           <VideosSection>
-            <InputSection>
+            <InputSection data-testid="input-section">
               <input
                 placeholder="Search"
                 value={searchInput}
@@ -94,90 +97,13 @@ const HomePage = () => {
     );
   };
 
-  return loader ? <Loader /> : renderHomePage();
+  return loader ? (
+    <div data-testid="loaderdiv">
+      <Loader />
+    </div>
+  ) : (
+    <div data-testid="homepage">{renderHomePage()}</div>
+  );
 };
 
 export default HomePage;
-
-// import { observer } from 'mobx-react';
-// import { Component } from 'react';
-// import { AppContext } from '../../Context/ThemeSaveContext';
-// import { homeStore } from '../../Store/homeStore';
-// // @observer
-// class HomePage extends Component {
-//   static contextType = AppContext;
-//   declare context: React.ContextType<typeof AppContext>;
-
-//   // fetchData = (): void => {
-//   //   homeStore.setLoader(true);
-//   //   fetch(`https://apis.ccbp.in/videos/all?search=${homeStore.searchInput}`, {
-//   //     method: 'GET',
-//   //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-//   //   })
-//   //     .then((res) => res.json())
-//   //     .then((res) => {
-//   //       homeStore.setFetchedVideos(res);
-//   //       homeStore.setLoader(false);
-//   //     });
-//   // };
-
-//   componentDidMount(): void {
-//     // this.fetchData();
-//     homeStore.getvideos();
-//   }
-
-//   renderNotFound = () => (
-//     <NotFound>
-//       <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png" />
-//       <h1>No Results Found</h1>
-//     </NotFound>
-//   );
-
-//   renderDisplayVideos = () => (
-//     <DisplayVideos>
-//       {homeStore.fetchedVideos?.videos.map((video) => (
-//         <IndividualVideo key={video.id} video={video} />
-//       ))}
-//     </DisplayVideos>
-//   );
-
-//   renderHomePage = () => {
-//     const ctx = this.context;
-//     if (!ctx) return null;
-//     const { theme } = ctx;
-//     return (
-//       <HomePageBox>
-//         <BannerAd />
-//         <VideosSection
-//           style={{
-//             backgroundColor: theme === 'light' ? '' : '#181818',
-//             color: theme === 'light' ? '#000' : '#fff',
-//           }}
-//         >
-//           <InputSection>
-//             <input
-//               placeholder="Search"
-//               value={homeStore.searchInput}
-//               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-//                 homeStore.setSearchInput(e.target.value)
-//               }
-//             />
-//             <button onClick={() => homeStore.getvideos()}>🔍</button>
-//           </InputSection>
-//           <div>
-//             {homeStore.fetchedVideos?.videos.length === 0
-//               ? this.renderNotFound()
-//               : this.renderDisplayVideos()}
-//           </div>
-//         </VideosSection>
-//       </HomePageBox>
-//     );
-//   };
-
-//   render() {
-//     return homeStore.loader ? <Loader /> : this.renderHomePage();
-//   }
-// }
-
-// // eslint-disable-next-line react-refresh/only-export-components
-// export default observer(HomePage);

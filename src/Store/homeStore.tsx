@@ -9,13 +9,13 @@ interface Video {
   view_count: string;
 }
 
-interface FetchedVideos {
+export interface FetchedVideos {
   videos: Video[];
 }
 
-class HomeStore {
+export class HomeStore {
   searchInput: string = '';
-  fetchedVideos: FetchedVideos | undefined = undefined;
+  fetchedVideos: FetchedVideos | { videos: [] } = { videos: [] };
   loader: boolean = true;
 
   constructor() {

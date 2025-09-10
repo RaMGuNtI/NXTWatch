@@ -7,7 +7,10 @@ const Loader: React.FC = () => {
   const theme = ctx?.theme || 'light';
 
   return (
-    <div className={`loader-container ${theme === 'dark' ? 'dark' : 'light'}`}>
+    <div
+      data-testid="loader"
+      className={`loader-container ${theme === 'dark' ? 'dark' : 'light'}`}
+    >
       <div className="spinner"></div>
     </div>
   );

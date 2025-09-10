@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 
-class NavStore {
+export class NavStore {
   panel = false;
   activeTab: string = '';
   showTimerBox: boolean = false;

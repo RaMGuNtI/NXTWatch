@@ -16,6 +16,7 @@ export const HomePageBox = styled.div`
   overflow: scroll;
   overflow-x: hidden;
   width: 80vw;
+  height: 95vh;
   @media (max-width: 576px) {
     width: 100vw;
   }
