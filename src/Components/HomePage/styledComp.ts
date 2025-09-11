@@ -27,17 +27,6 @@ export const VideosSection = styled.div`
   flex-direction: column;
 `;
 
-export const InputSection = styled.div`
-  display: flex;
-  padding: 10px;
-  input {
-    width: 30vw;
-    padding: 5px;
-  }
-  button {
-    width: 15%;
-  }
-`;
 
 export const DisplayVideos = styled.div`
   padding-left: 10px;

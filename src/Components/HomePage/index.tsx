@@ -2,7 +2,6 @@ import BannerAd from '../BannerAd';
 import {
   DisplayVideos,
   HomePageBox,
-  InputSection,
   NotFound,
   VideosSection,
 } from './styledComp';
@@ -15,6 +14,7 @@ import { AppContext } from '../../Context/ThemeSaveContext';
 import { ThemeProvider } from 'styled-components';
 import { useState, useEffect, useContext } from 'react';
 import Cookies from 'js-cookie';
+import InputElement from '../InputBox';
 interface Video {
   channel: { name: string; profile_image_url: string };
   id: string;
@@ -76,16 +76,11 @@ const HomePage = () => {
         <BannerAd data-testid="banner" />
         <ThemeProvider theme={{ mode: theme }}>
           <VideosSection>
-            <InputSection data-testid="input-section">
-              <input
-                placeholder="Search"
-                value={searchInput}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearchInput(e.target.value)
-                }
-              />
-              <button onClick={() => fetchVideos()}>🔍</button>
-            </InputSection>
+            <InputElement
+              searchInput={searchInput}
+              setSearchInput={setSearchInput}
+              fetchVideos={fetchVideos}
+            />
             <div>
               {fetchedVideos?.videos.length === 0
                 ? renderNotFound()
