@@ -9,11 +9,11 @@ import {
   LeftPanelBox,
   SocialMediaIcons,
   CatVideoSection,
-  SepCatVideo,
   SocialMediaSection,
   ContactSection,
 } from './styledComp';
 import { AppContext } from '../../Context/ThemeSaveContext';
+import LeftPanelNavItem from '../LeftPanelNavItem';
 class LeftPanel extends Component<WithNavigationProps> {
   static contextType = AppContext;
   declare context: React.ContextType<typeof AppContext>;
@@ -29,59 +29,38 @@ class LeftPanel extends Component<WithNavigationProps> {
         }}
       >
         <CatVideoSection>
-          <SepCatVideo
-            style={{
-              backgroundColor: theme === 'light' ? '' : '#242424',
-              color: theme === 'light' ? '' : '#fff',
-            }}
-            $active={this.props.location.pathname === '/'}
-            onClick={() => {
-              this.props.navigate('/');
-            }}
-          >
-            <FaHome style={{ color: 'red' }} />
-            <p>Home</p>
-          </SepCatVideo>
-          <SepCatVideo
-            style={{
-              backgroundColor: theme === 'light' ? '' : '#242424',
-              color: theme === 'light' ? '' : '#fff',
-            }}
-            $active={this.props.location.pathname === '/trending'}
-            onClick={() => {
-              this.props.navigate('/trending');
-            }}
-          >
-            <FaFire style={{ color: 'red' }} />
-            <p>Trending</p>
-          </SepCatVideo>
-          <SepCatVideo
-            style={{
-              backgroundColor: theme === 'light' ? '' : '#242424',
-              color: theme === 'light' ? '' : '#fff',
-            }}
-            $active={this.props.location.pathname === '/gaming'}
-            onClick={() => {
-              this.props.navigate('/gaming');
-            }}
-          >
-            <SiYoutubegaming style={{ color: 'red' }} />
-            <p>Gaming</p>
-          </SepCatVideo>
-          <SepCatVideo
-            style={{
-              backgroundColor: theme === 'light' ? '' : '#242424',
-              color: theme === 'light' ? '' : '#fff',
-            }}
-            $active={this.props.location.pathname === '/saved-videos'}
-            onClick={() => {
-              this.setState({ activeTab: 'SavedVideo' });
-              this.props.navigate('/saved-videos');
-            }}
-          >
-            <CiSaveDown2 style={{ color: 'red', fontWeight: 'bold' }} />
-            <p>Saved Videos</p>
-          </SepCatVideo>
+          <LeftPanelNavItem
+            navigate={this.props.navigate}
+            location={this.props.location}
+            theme={theme}
+            icon={<FaHome style={{ color: 'red' }} />}
+            text="Home"
+            path="/"
+          />
+          <LeftPanelNavItem
+            navigate={this.props.navigate}
+            location={this.props.location}
+            theme={theme}
+            icon={<FaFire style={{ color: 'red' }} />}
+            text="Trending"
+            path="/trending"
+          />
+          <LeftPanelNavItem
+            navigate={this.props.navigate}
+            location={this.props.location}
+            theme={theme}
+            icon={<SiYoutubegaming style={{ color: 'red' }} />}
+            text="Gaming"
+            path="/gaming"
+          />
+          <LeftPanelNavItem
+            navigate={this.props.navigate}
+            location={this.props.location}
+            theme={theme}
+            icon={<CiSaveDown2 style={{ color: 'red' }} />}
+            text="Saved Videos"
+            path="/saved-videos"
+          />
         </CatVideoSection>
         <ContactSection>
           <p>CONTACT US</p>
