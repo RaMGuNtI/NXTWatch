@@ -12,15 +12,19 @@ import {
   SocialMediaSection,
   ContactSection,
 } from './styledComp';
-import { AppContext } from '../../Context/ThemeSaveContext';
 import LeftPanelNavItem from '../LeftPanelNavItem';
-class LeftPanel extends Component<WithNavigationProps> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
+import { RootStore } from '../../Store/rootStore';
+import { inject, observer } from 'mobx-react';
+interface RootProps {
+  rootStore?: RootStore | undefined;
+}
+type Props = WithNavigationProps & RootProps;
+
+class LeftPanel extends Component<Props> {
   render(): ReactNode {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
+    const { rootStore } = this.props!;
+    const { themeStore } = rootStore!;
+    const { theme } = themeStore;
     return (
       <LeftPanelBox
         style={{
@@ -85,5 +89,5 @@ class LeftPanel extends Component<WithNavigationProps> {
   }
 }
 
-const LeftPanelWithNav = withNavigation(LeftPanel);
-export default LeftPanelWithNav;
+// eslint-disable-next-line react-refresh/only-export-components
+export default withNavigation(inject('rootStore')(observer(LeftPanel)));

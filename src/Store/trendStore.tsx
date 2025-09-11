@@ -16,7 +16,7 @@ interface FetchedVideos {
   videos: Video[];
 }
 
-class TrendStore {
+export class TrendStore {
   fetchedVideos: FetchedVideos | undefined = undefined;
   loader = true;
   constructor() {

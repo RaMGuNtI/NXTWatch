@@ -1,10 +1,16 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../../Context/ThemeSaveContext';
+// Components/Loader/Loader.tsx
+import React from 'react';
+import { inject, observer } from 'mobx-react';
+import type { RootStore } from '../../Store/rootStore';
 import './Loader.css';
 
-const Loader: React.FC = () => {
-  const ctx = useContext(AppContext);
-  const theme = ctx?.theme || 'light';
+interface Props {
+  rootStore?: RootStore;
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+const Loader: React.FC<Props> = ({ rootStore }) => {
+  const theme = rootStore?.themeStore.theme ?? 'light';
 
   return (
     <div
@@ -16,4 +22,5 @@ const Loader: React.FC = () => {
   );
 };
 
-export default Loader;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootStore')(observer(Loader));

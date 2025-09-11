@@ -1,5 +1,4 @@
 import { Component } from 'react';
-// import Cookies from 'js-cookie';
 import { IoGameController } from 'react-icons/io5';
 import IndividualGaming from '../IndividualGaming';
 import {
@@ -7,58 +6,45 @@ import {
   GamePageBox,
   PageSectionName,
 } from './styledComp';
-import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
-import { gameStore } from '../../Store/gamingStore';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { ThemeProvider } from 'styled-components';
-class GamingPage extends Component {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
-  // fetchData = (): void => {
-  //   gameStore.setLoader(true);
-  //   fetch(`https://apis.ccbp.in/videos/gaming`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       gameStore.setFetchedVideos(res);
-  //       gameStore.setLoader(false);
-  //     });
-  // };
+import type { RootStore } from '../../Store/rootStore';
 
+interface GamingPageProps {
+  rootStore?: RootStore;
+}
+
+class GamingPage extends Component<GamingPageProps> {
   componentDidMount(): void {
-    // this.fetchData();
-    gameStore.getvideos();
+    this.props.rootStore?.gameStore.getvideos();
   }
 
-  renderDisplayVideos = () => (
-    <DisplayGamingVideos>
-      {gameStore.fetchedVideos &&
-        gameStore.fetchedVideos.videos.map((each, idx) => {
-          return <IndividualGaming key={idx} game={each} />;
-        })}
-    </DisplayGamingVideos>
-  );
-
-  renderGamingPage = () => {
+  renderDisplayVideos = () => {
+    const { gameStore } = this.props.rootStore!;
     return (
-      <GamePageBox>
-        <PageSectionName>
-          <IoGameController style={{ fontSize: '50px', color: 'red' }} />
-          <h1>Gaming</h1>
-        </PageSectionName>
-        {this.renderDisplayVideos()}
-      </GamePageBox>
+      <DisplayGamingVideos>
+        {gameStore.fetchedVideos?.videos.map((each, idx) => (
+          <IndividualGaming key={idx} game={each} />
+        ))}
+      </DisplayGamingVideos>
     );
   };
 
+  renderGamingPage = () => (
+    <GamePageBox>
+      <PageSectionName>
+        <IoGameController style={{ fontSize: '50px', color: 'red' }} />
+        <h1>Gaming</h1>
+      </PageSectionName>
+      {this.renderDisplayVideos()}
+    </GamePageBox>
+  );
+
   render() {
-    const ctx = this.context;
-    if (!ctx) return null;
+    const { gameStore, themeStore } = this.props.rootStore!;
     return (
-      <ThemeProvider theme={{ mode: ctx?.theme }}>
+      <ThemeProvider theme={{ mode: themeStore.theme }}>
         {gameStore.loader ? <Loader /> : this.renderGamingPage()}
       </ThemeProvider>
     );
@@ -66,4 +52,4 @@ class GamingPage extends Component {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default observer(GamingPage);
+export default inject('rootStore')(observer(GamingPage));

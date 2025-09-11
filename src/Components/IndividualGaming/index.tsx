@@ -1,9 +1,9 @@
 import { Component, type ReactNode } from 'react';
 import { GameInfo, GamingBoxUI, GamingImage } from './styledComp';
 import { Link } from 'react-router-dom';
-import { AppContext } from '../../Context/ThemeSaveContext';
-// import { ThemeProvider } from 'styled-components';
-// import { light, dark } from './styledComp';
+import { inject, observer } from 'mobx-react';
+import type { RootStore } from '../../Store/rootStore';
+
 interface IndividualGamingProps {
   game: {
     id: string;
@@ -11,29 +11,25 @@ interface IndividualGamingProps {
     title: string;
     view_count: string;
   };
+  rootStore?: RootStore;
 }
 
 class IndividualGaming extends Component<IndividualGamingProps> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
   render(): ReactNode {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
-    const { game } = this.props;
+    const { game, rootStore } = this.props;
+    if (!rootStore) return null;
+    const theme = rootStore.themeStore.theme;
+
+    const linkStyle = {
+      textDecoration: 'none',
+      color: theme === 'light' ? '#000' : '#fff',
+    };
+
     return (
-      // <ThemeProvider theme={theme ? dark : light}>
-      <Link
-        to={`/videos/${game.id}`}
-        style={{ textDecoration: 'none', color: 'black' }}
-      >
-        <GamingBoxUI
-          style={{
-            color: theme === 'light' ? '#000' : '#fff',
-          }}
-        >
+      <Link to={`/videos/${game.id}`} style={linkStyle}>
+        <GamingBoxUI style={{ color: theme === 'light' ? '#000' : '#fff' }}>
           <GamingImage>
-            <img src={game.thumbnail_url} />
+            <img src={game.thumbnail_url} alt={game.title} />
           </GamingImage>
           <GameInfo>
             <h3>{game.title}</h3>
@@ -41,11 +37,9 @@ class IndividualGaming extends Component<IndividualGamingProps> {
           </GameInfo>
         </GamingBoxUI>
       </Link>
-      // </ThemeProvider>
     );
   }
 }
 
-// ThemeProvider is not working if link is tag is present
-
-export default IndividualGaming;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootStore')(observer(IndividualGaming));

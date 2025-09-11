@@ -14,43 +14,38 @@ import {
 } from './styledComp';
 import Cookies from 'js-cookie';
 import { type WithNavigationProps, withNavigation } from '../../withNavigation';
-import { AppContext } from '../../Context/ThemeSaveContext';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { CiSaveDown2 } from 'react-icons/ci';
 import { FaHome, FaFire } from 'react-icons/fa';
 import { SiYoutubegaming } from 'react-icons/si';
 import { CatVideoSection, SepCatVideo } from '../LeftPanel/styledComp';
 import 'reactjs-popup/dist/index.css';
-import { navStore } from '../../Store/navStore';
 import { IoTimer } from 'react-icons/io5';
 import { MdDarkMode, MdOutlineLightMode } from 'react-icons/md';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { IoLogOutSharp } from 'react-icons/io5';
+import type { RootStore } from '../../Store/rootStore';
+
 interface NavBarState {
   panel: boolean;
   activeTab?: string;
 }
 
-type NavBarProps = WithNavigationProps;
+type NavBarProps = WithNavigationProps & { rootStore?: RootStore };
 
 class NavBarComp extends Component<NavBarProps, NavBarState> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
-
   logout = () => {
     Cookies.remove('Token');
     this.props.navigate('/login');
   };
 
   showPanel = () => {
-    navStore.setPanel();
+    this.props.rootStore?.navStore.setPanel();
   };
 
   renderPanel = () => {
-    const ctx = this.context;
-    if (!ctx) return null;
-
-    const { theme } = ctx;
+    const { navStore, themeStore } = this.props.rootStore!;
+    const { theme } = themeStore;
 
     return (
       <CatVideoSection>
@@ -84,8 +79,9 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
             }}
             $active={this.props.location.pathname === item.path}
             onClick={() => {
-              if (item.path === '/saved-videos')
+              if (item.path === '/saved-videos') {
                 navStore.setActiveTab('SavedVideo');
+              }
               this.props.navigate(item.path);
             }}
           >
@@ -97,34 +93,14 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
     );
   };
 
-  // renderPopUp = () => {
-  //   return (
-  //     <Popup modal trigger={<LogoutBut type="button">Logout</LogoutBut>}>
-  //       {(close) => (
-  //         <PopUPStyle>
-  //           <div>
-  //             <p>Are you sure you want to Logout?</p>
-  //           </div>
-  //           <div>
-  //             <CancelBtn type="button" onClick={close}>
-  //               Cancel
-  //             </CancelBtn>
-  //             <LogoutBut type="button" onClick={this.logout}>
-  //               Confirm
-  //             </LogoutBut>
-  //           </div>
-  //         </PopUPStyle>
-  //       )}
-  //     </Popup>
-  //   );
-  // };
-
   startTimer = () => {
+    const { navStore } = this.props.rootStore!;
     const TimerKey = setInterval(() => navStore.minusTimer(), 60000);
     navStore.setTimerKey(TimerKey);
   };
 
   componentDidUpdate(): void {
+    const { navStore } = this.props.rootStore!;
     if (navStore.timerStartNum === 0) {
       navStore.setTimerStartNum();
       navStore.setIsStarted();
@@ -133,16 +109,15 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   }
 
   componentWillUnmount(): void {
+    const { navStore } = this.props.rootStore!;
     if (navStore.timerKey !== null) {
       clearInterval(navStore.timerKey);
     }
   }
 
   render(): ReactNode {
-    const ctx = this.context;
-    if (!ctx) return null;
-
-    const { theme, toggleTheme } = ctx;
+    const { themeStore, navStore } = this.props.rootStore!;
+    const { theme, toggleTheme } = themeStore;
 
     return (
       <div>
@@ -164,6 +139,7 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
           </NavLogo>
 
           <NavRight>
+            {/* Timer */}
             <TimerBox>
               <IoTimer onClick={() => navStore.setShowTimerBox()} />
               {navStore.showTimerBox && (
@@ -189,37 +165,42 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
               )}
             </TimerBox>
 
+            {/* Theme Toggle */}
             <div
-              onClick={toggleTheme}
+              onClick={() => toggleTheme()}
               style={{ cursor: 'pointer', fontSize: '25px' }}
             >
               {theme === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
             </div>
 
+            {/* Hamburger Menu */}
             <HamBurger>
               <GiHamburgerMenu onClick={this.showPanel} />
             </HamBurger>
 
+            {/* Profile */}
             <ProfileBox>
               <img
                 src="https://assets.ccbp.in/frontend/react-js/nxt-watch-profile-img.png"
                 alt="profile"
               />
             </ProfileBox>
+
+            {/* Logout */}
             <LogoutBut onClick={this.logout}>Logout</LogoutBut>
             <SmallLogout>
               <IoLogOutSharp onClick={this.logout} />
             </SmallLogout>
-            {/* <div>{this.renderPopUp()}</div> */}
           </NavRight>
         </NavBarBox>
 
+        {/* Left Panel */}
         {navStore.panel ? this.renderPanel() : null}
       </div>
     );
   }
 }
 
-// const NavBar = withNavigation(NavBarComp);
-// eslint-disable-next-line react-refresh/only-export-components
-export default withNavigation(observer(NavBarComp));
+const NavBar = withNavigation(inject('rootStore')(observer(NavBarComp)));
+
+export default NavBar;

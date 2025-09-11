@@ -23,10 +23,10 @@ export class HomeStore {
       searchInput: observable,
       fetchedVideos: observable,
       loader: observable,
-      setSearchInput: action,
-      setFetchedVideos: action,
-      setLoader: action,
-      getvideos: flow,
+      setSearchInput: action.bound,
+      setFetchedVideos: action.bound,
+      setLoader: action.bound,
+      getvideos: flow.bound,
     });
   }
 

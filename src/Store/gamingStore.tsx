@@ -13,7 +13,7 @@ interface FetchedVideos {
   videos: Video[];
 }
 
-class GameStore {
+export class GameStore {
   fetchedVideos: FetchedVideos | undefined = undefined;
   loader = true;
   constructor() {

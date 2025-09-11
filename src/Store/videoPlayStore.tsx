@@ -15,7 +15,7 @@ interface VideoDetails {
   view_count: string;
 }
 
-class VideoStore {
+export class VideoStore {
   fetchedVideo: VideoDetails | undefined = undefined;
   embedId: string = '';
   constructor() {

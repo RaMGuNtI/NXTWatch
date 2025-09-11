@@ -15,7 +15,8 @@ import {
   ErrorMsg,
 } from './styledComp';
 import { Navigate } from 'react-router-dom';
-import { AppContext } from '../../Context/ThemeSaveContext';
+import { observer, inject } from 'mobx-react';
+import type { RootStore } from '../../Store/rootStore';
 interface LoginPageState {
   username: string;
   password: string;
@@ -29,9 +30,9 @@ interface OptionInterFace {
   body: string;
 }
 
-class LoginPage extends Component<WithNavigationProps> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
+type Props = WithNavigationProps & { rootStore?: RootStore };
+
+class LoginPage extends Component<Props> {
   state: LoginPageState = {
     username: '',
     password: '',
@@ -69,10 +70,8 @@ class LoginPage extends Component<WithNavigationProps> {
   };
 
   render() {
-    const ctx = this.context;
-    if (!ctx) return null;
-
-    const { theme } = ctx;
+    const { rootStore } = this.props;
+    const theme = rootStore!.themeStore.theme;
     if (Cookies.get('Token') !== undefined) {
       return <Navigate to="/" />;
     }
@@ -133,6 +132,6 @@ class LoginPage extends Component<WithNavigationProps> {
   }
 }
 
-const HomeNavigation = withNavigation(LoginPage);
+const HomeNavigation = withNavigation(inject('rootStore')(observer(LoginPage)));
 
 export default HomeNavigation;

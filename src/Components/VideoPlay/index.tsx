@@ -1,6 +1,6 @@
+// Components/VideoPlayer/index.tsx
 import { Component, type ReactNode } from 'react';
 import { type WithNavigationProps, withNavigation } from '../../withNavigation';
-// import Cookies from 'js-cookie';
 import { BiLike, BiDislike } from 'react-icons/bi';
 import { HiOutlineSaveAs } from 'react-icons/hi';
 import { LuDot } from 'react-icons/lu';
@@ -21,73 +21,33 @@ import {
   YoutubeVideo,
   YoutubeVideoDiv,
 } from './styledComp';
-import { AppContext } from '../../Context/ThemeSaveContext';
-import { videoPlayStore } from '../../Store/videoPlayStore';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import type { RootStore } from '../../Store/rootStore';
 
-interface VideoDetails {
-  channel: {
-    name: string;
-    profile_image_url: string;
-    subscriber_count: string;
-  };
-  description: string;
-  id: string;
-  published_at: string;
-  thumbnail_url: string;
-  title: string;
-  video_url: string;
-  view_count: string;
+interface StoreProps {
+  rootStore?: RootStore;
 }
+type Props = StoreProps & WithNavigationProps;
 
-interface VideoPlayerState {
-  fetchedVideo?: VideoDetails;
-  embedId: string;
-}
-
-class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
-
-  // state: VideoPlayerState = {
-  //   fetchedVideo: undefined,
-  //   embedId: '',
-  // };
-
-  // fetchData = (): void => {
-  //   fetch(`https://apis.ccbp.in/videos/${this.props.param.id}`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       this.setState({
-  //         fetchedVideo: res.video_details,
-  //         embedId: res.video_details.video_url.split('=')[1],
-  //       });
-  //     });
-  // };
-
+class VideoPlayer extends Component<Props> {
   componentDidMount(): void {
-    // this.fetchData();
-    videoPlayStore.getvideos(this.props.param.id);
+    const { rootStore } = this.props!;
+    rootStore?.videoPlayStore.getvideos(this.props.param.id);
   }
 
   render(): ReactNode {
-    const ctx = this.context;
-    if (!ctx) return null;
-
+    const { rootStore } = this.props!;
+    const { themeStore, saveVideoStore, videoPlayStore } = rootStore!;
+    const { theme } = themeStore;
+    const { fetchedVideo, embedId } = videoPlayStore;
     const {
-      theme,
       savedVideos,
       addVideo,
       removeVideo,
       videoReactions,
       toggleLike,
       toggleDislike,
-    } = ctx;
-    const { fetchedVideo, embedId } = videoPlayStore;
-    // const { fetchedVideo, embedId } = this.state;
+    } = saveVideoStore;
 
     if (!fetchedVideo) return null;
 
@@ -102,7 +62,6 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
         className={theme === 'light' ? 'light-theme' : 'dark-theme'}
         style={{ display: 'flex', justifyContent: 'center' }}
       >
-        {/* Video Player */}
         <YoutubeVideoDiv>
           <YoutubeVideo
             src={`https://www.youtube.com/embed/${embedId}`}
@@ -114,7 +73,6 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
           />
         </YoutubeVideoDiv>
 
-        {/* Info Section */}
         <VideoInfo>
           <VideoTitle>
             <p>{fetchedVideo.title}</p>
@@ -188,5 +146,5 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
   }
 }
 
-const VideoPlay = withNavigation(observer(VideoPlayer));
-export default VideoPlay;
+// eslint-disable-next-line react-refresh/only-export-components
+export default withNavigation(inject('rootStore')(observer(VideoPlayer)));
