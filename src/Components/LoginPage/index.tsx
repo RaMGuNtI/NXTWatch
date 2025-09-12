@@ -58,7 +58,9 @@ class LoginPage extends Component<Props> {
       }),
     };
     fetch('https://apis.ccbp.in/login', options)
-      .then((res) => res.json())
+      .then((res) => {
+        return res.json();
+      })
       .then((res) => {
         if (res.status_code === 400) {
           this.setState({ showError: res.error_msg });
