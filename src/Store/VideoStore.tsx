@@ -61,7 +61,20 @@ export class VideoStore {
   };
 
   setFetchedVideos(vid: FetchedVideos) {
-    this.fetchedVideos = vid;
+    const normalized: FetchedVideos = {
+      videos: vid.videos.map((video: Video) => ({
+        id: video.id,
+        title: video.title,
+        thumbnail_url: video.thumbnail_url,
+        published_at: video.published_at,
+        view_count: video.view_count,
+        channel: {
+          name: video.channel?.name ?? '',
+          profile_image_url: video.channel?.profile_image_url ?? '',
+        },
+      })),
+    };
+    this.fetchedVideos = normalized;
   }
 
   setApiStatus(status: VideoStoreApiStatus) {
@@ -72,13 +85,13 @@ export class VideoStore {
     this.searchInput = text;
   }
 
-  fetchHomepageVideos() {
+  fetchHomepageVideos = () => {
     this.fetchCatVideos('home', this.searchInput);
-  }
-  fetchTrendingVideos() {
+  };
+  fetchTrendingVideos = () => {
     this.fetchCatVideos('trending');
-  }
-  fetchGamingVideos() {
+  };
+  fetchGamingVideos = () => {
     this.fetchCatVideos('gaming');
-  }
+  };
 }

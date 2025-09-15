@@ -11,7 +11,7 @@ import {
 } from './styledComp';
 import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
+import { RootAppStore } from '../../Store/RootAppStore';
 
 interface IndividualVideoInterface {
   video: {
@@ -22,14 +22,14 @@ interface IndividualVideoInterface {
     title: string;
     view_count: string;
   };
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 
 class IndividualVideo extends Component<IndividualVideoInterface> {
   render() {
-    const { video, rootStore } = this.props;
-    if (!rootStore) return null;
-    const theme = rootStore.themeStore.theme;
+    const { video, rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const theme = rootAppStore.themeStore.theme;
 
     const linkStyle = {
       textDecoration: 'none',
@@ -66,4 +66,4 @@ class IndividualVideo extends Component<IndividualVideoInterface> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(IndividualVideo));
+export default inject('rootAppStore')(observer(IndividualVideo));

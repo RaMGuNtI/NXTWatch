@@ -11,20 +11,24 @@ import { ThemeProvider } from 'styled-components';
 import { useEffect } from 'react';
 import InputElement from '../InputBox';
 import { observer, inject } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
-
+import type { RootAppStore } from '../../Store/RootAppStore';
 interface Props {
-  rootStore?: RootStore | undefined;
+  rootAppStore?: RootAppStore | undefined;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const HomePage: React.FC<Props> = ({ rootStore }) => {
-  const { homeStore, themeStore } = rootStore!;
-
-  const { loader, searchInput, fetchedVideos, getvideos, setSearchInput } =
-    homeStore;
+const HomePage: React.FC<Props> = ({ rootAppStore }) => {
+  const { videoStore, themeStore } = rootAppStore!;
+  const { theme } = themeStore;
+  const {
+    fetchHomepageVideos,
+    searchInput,
+    fetchedVideos,
+    setSearchInput,
+    apiStatus,
+  } = videoStore;
   useEffect(() => {
-    getvideos();
+    fetchHomepageVideos();
   }, []);
 
   const renderNotFound = () => (
@@ -46,12 +50,12 @@ const HomePage: React.FC<Props> = ({ rootStore }) => {
     return (
       <HomePageBox>
         <BannerAd data-testid="banner" />
-        <ThemeProvider theme={{ mode: themeStore.theme }}>
+        <ThemeProvider theme={{ mode: theme }}>
           <VideosSection>
             <InputElement
               searchInput={searchInput}
               setterInput={setSearchInput}
-              fetchVideos={getvideos}
+              fetchVideos={fetchHomepageVideos}
             />
             <div>
               {fetchedVideos?.videos.length === 0
@@ -64,7 +68,7 @@ const HomePage: React.FC<Props> = ({ rootStore }) => {
     );
   };
 
-  return loader ? (
+  return apiStatus === 'pending' ? (
     <HomePageBox data-testid="loaderdiv">
       <Loader />
     </HomePageBox>
@@ -74,4 +78,4 @@ const HomePage: React.FC<Props> = ({ rootStore }) => {
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(HomePage));
+export default inject('rootAppStore')(observer(HomePage));

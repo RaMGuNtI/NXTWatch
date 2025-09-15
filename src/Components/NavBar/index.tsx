@@ -24,14 +24,13 @@ import { IoTimer } from 'react-icons/io5';
 import { MdDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { observer, inject } from 'mobx-react';
 import { IoLogOutSharp } from 'react-icons/io5';
-import type { RootStore } from '../../Store/rootStore';
-
+import { RootAppStore } from '../../Store/RootAppStore';
 interface NavBarState {
   panel: boolean;
   activeTab?: string;
 }
 
-type NavBarProps = WithNavigationProps & { rootStore?: RootStore };
+type NavBarProps = WithNavigationProps & { rootAppStore?: RootAppStore };
 
 class NavBarComp extends Component<NavBarProps, NavBarState> {
   logout = () => {
@@ -40,11 +39,11 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   };
 
   showPanel = () => {
-    this.props.rootStore?.navStore.setPanel();
+    this.props.rootAppStore?.navStore.setPanel();
   };
 
   renderPanel = () => {
-    const { navStore, themeStore } = this.props.rootStore!;
+    const { navStore, themeStore } = this.props.rootAppStore!;
     const { theme } = themeStore;
 
     return (
@@ -94,13 +93,13 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   };
 
   startTimer = () => {
-    const { navStore } = this.props.rootStore!;
+    const { navStore } = this.props.rootAppStore!;
     const TimerKey = setInterval(() => navStore.minusTimer(), 60000);
     navStore.setTimerKey(TimerKey);
   };
 
   componentDidUpdate(): void {
-    const { navStore } = this.props.rootStore!;
+    const { navStore } = this.props.rootAppStore!;
     if (navStore.timerStartNum === 0) {
       navStore.setTimerStartNum();
       navStore.setIsStarted();
@@ -109,14 +108,14 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   }
 
   componentWillUnmount(): void {
-    const { navStore } = this.props.rootStore!;
+    const { navStore } = this.props.rootAppStore!;
     if (navStore.timerKey !== null) {
       clearInterval(navStore.timerKey);
     }
   }
 
   render(): ReactNode {
-    const { themeStore, navStore } = this.props.rootStore!;
+    const { themeStore, navStore } = this.props.rootAppStore!;
     const { theme, toggleTheme } = themeStore;
 
     return (
@@ -201,6 +200,6 @@ class NavBarComp extends Component<NavBarProps, NavBarState> {
   }
 }
 
-const NavBar = withNavigation(inject('rootStore')(observer(NavBarComp)));
+const NavBar = withNavigation(inject('rootAppStore')(observer(NavBarComp)));
 
 export default NavBar;

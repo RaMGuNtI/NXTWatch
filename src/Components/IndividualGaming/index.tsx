@@ -2,8 +2,7 @@ import { Component, type ReactNode } from 'react';
 import { GameInfo, GamingBoxUI, GamingImage } from './styledComp';
 import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
-
+import { RootAppStore } from '../../Store/RootAppStore';
 interface IndividualGamingProps {
   game: {
     id: string;
@@ -11,14 +10,14 @@ interface IndividualGamingProps {
     title: string;
     view_count: string;
   };
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 
 class IndividualGaming extends Component<IndividualGamingProps> {
   render(): ReactNode {
-    const { game, rootStore } = this.props;
-    if (!rootStore) return null;
-    const theme = rootStore.themeStore.theme;
+    const { game, rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const theme = rootAppStore.themeStore.theme;
 
     const linkStyle = {
       textDecoration: 'none',
@@ -42,4 +41,4 @@ class IndividualGaming extends Component<IndividualGamingProps> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(IndividualGaming));
+export default inject('rootAppStore')(observer(IndividualGaming));

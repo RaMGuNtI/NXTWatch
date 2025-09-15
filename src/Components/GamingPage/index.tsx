@@ -9,22 +9,21 @@ import {
 import Loader from '../Loader/Loader';
 import { observer, inject } from 'mobx-react';
 import { ThemeProvider } from 'styled-components';
-import type { RootStore } from '../../Store/rootStore';
-
+import { RootAppStore } from '../../Store/RootAppStore';
 interface GamingPageProps {
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 
 class GamingPage extends Component<GamingPageProps> {
   componentDidMount(): void {
-    this.props.rootStore?.gameStore.getvideos();
+    this.props.rootAppStore?.videoStore.fetchGamingVideos();
   }
 
   renderDisplayVideos = () => {
-    const { gameStore } = this.props.rootStore!;
+    const { fetchedVideos } = this.props.rootAppStore!.videoStore;
     return (
       <DisplayGamingVideos>
-        {gameStore.fetchedVideos?.videos.map((each, idx) => (
+        {fetchedVideos?.videos.map((each, idx) => (
           <IndividualGaming key={idx} game={each} />
         ))}
       </DisplayGamingVideos>
@@ -42,14 +41,18 @@ class GamingPage extends Component<GamingPageProps> {
   );
 
   render() {
-    const { gameStore, themeStore } = this.props.rootStore!;
+    const { videoStore, themeStore } = this.props.rootAppStore!;
     return (
       <ThemeProvider theme={{ mode: themeStore.theme }}>
-        {gameStore.loader ? <Loader /> : this.renderGamingPage()}
+        {videoStore.apiStatus === 'pending' ? (
+          <Loader />
+        ) : (
+          this.renderGamingPage()
+        )}
       </ThemeProvider>
     );
   }
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(GamingPage));
+export default inject('rootAppStore')(observer(GamingPage));

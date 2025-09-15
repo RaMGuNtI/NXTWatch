@@ -1,20 +1,6 @@
 // Store/saveVideoStore.ts
 import { makeAutoObservable } from 'mobx';
-
-interface SavedVideo {
-  channel: {
-    name: string;
-    profile_image_url: string;
-    subscriber_count: string;
-  };
-  description: string;
-  id: string;
-  published_at: string;
-  thumbnail_url: string;
-  title: string;
-  video_url: string;
-  view_count: string;
-}
+import type { VideoDetails } from './VideoStore';
 
 interface VideoReaction {
   id: string;
@@ -23,14 +9,14 @@ interface VideoReaction {
 }
 
 export class SaveVideoStore {
-  savedVideos: SavedVideo[] = [];
+  savedVideos: VideoDetails[] = [];
   videoReactions: VideoReaction[] = [];
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  addVideo = (video: SavedVideo) => {
+  addVideo = (video: VideoDetails) => {
     const exists = this.savedVideos.some((v) => v.id === video.id);
     if (!exists) this.savedVideos.push(video);
   };
@@ -67,5 +53,3 @@ export class SaveVideoStore {
     }
   };
 }
-
-export const saveVideoStore = new SaveVideoStore();

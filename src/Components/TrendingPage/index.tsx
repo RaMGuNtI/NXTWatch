@@ -4,20 +4,20 @@ import IndividualTrendingVideo from '../IndividualTrendingVideo';
 import { PageSectionName, TrendingPageUI } from './styledComp';
 import Loader from '../Loader/Loader';
 import { inject, observer } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
+import { RootAppStore } from '../../Store/rootAppStore';
 import { ThemeProvider } from 'styled-components';
 
 interface Props {
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 
 class TrendingPage extends Component<Props> {
   componentDidMount(): void {
-    this.props.rootStore?.trendStore.getvideos();
+    this.props.rootAppStore?.videoStore.fetchTrendingVideos();
   }
 
   renderTrendingPage = () => {
-    const { trendStore } = this.props.rootStore!;
+    const { fetchedVideos } = this.props.rootAppStore!.videoStore;
     return (
       <TrendingPageUI>
         <PageSectionName>
@@ -25,7 +25,7 @@ class TrendingPage extends Component<Props> {
           <h1>Trending</h1>
         </PageSectionName>
         <div>
-          {trendStore.fetchedVideos?.videos.map((each) => (
+          {fetchedVideos?.videos.map((each) => (
             <IndividualTrendingVideo key={each.id} video={each} />
           ))}
         </div>
@@ -34,18 +34,22 @@ class TrendingPage extends Component<Props> {
   };
 
   render() {
-    const { rootStore } = this.props;
-    if (!rootStore) return null;
-    const { themeStore, trendStore } = rootStore;
+    const { rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const { themeStore, videoStore } = rootAppStore;
     const theme = themeStore.theme;
 
     return (
       <ThemeProvider theme={{ mode: theme }}>
-        {trendStore.loader ? <Loader /> : this.renderTrendingPage()}
+        {videoStore.apiStatus === 'pending' ? (
+          <Loader />
+        ) : (
+          this.renderTrendingPage()
+        )}
       </ThemeProvider>
     );
   }
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(TrendingPage));
+export default inject('rootAppStore')(observer(TrendingPage));

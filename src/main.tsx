@@ -4,12 +4,12 @@ import './index.css';
 import App from './App.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'mobx-react';
-import rootStore from './Store/rootStore.tsx';
+import rootAppStore from './Store/RootAppStore.tsx';
 createRoot(document.getElementById('root')!).render(
   <div className="asd">
     <StrictMode>
       <BrowserRouter>
-        <Provider rootStore={rootStore}>
+        <Provider rootAppStore={rootAppStore}>
           <App />
         </Provider>
       </BrowserRouter>

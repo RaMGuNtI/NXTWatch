@@ -13,17 +13,17 @@ import {
   ContactSection,
 } from './styledComp';
 import LeftPanelNavItem from '../LeftPanelNavItem';
-import { RootStore } from '../../Store/rootStore';
+import { RootAppStore } from '../../Store/RootAppStore';
 import { inject, observer } from 'mobx-react';
 interface RootProps {
-  rootStore?: RootStore | undefined;
+  rootAppStore?: RootAppStore | undefined;
 }
 type Props = WithNavigationProps & RootProps;
 
 class LeftPanel extends Component<Props> {
   render(): ReactNode {
-    const { rootStore } = this.props!;
-    const { themeStore } = rootStore!;
+    const { rootAppStore } = this.props!;
+    const { themeStore } = rootAppStore!;
     const { theme } = themeStore;
     return (
       <LeftPanelBox
@@ -90,4 +90,4 @@ class LeftPanel extends Component<Props> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default withNavigation(inject('rootStore')(observer(LeftPanel)));
+export default withNavigation(inject('rootAppStore')(observer(LeftPanel)));

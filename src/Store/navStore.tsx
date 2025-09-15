@@ -49,4 +49,3 @@ export class NavStore {
     this.timerStartNum = 1;
   }
 }
-export const navStore = new NavStore();

@@ -12,15 +12,15 @@ import './App.css';
 import VideoPlay from './Components/VideoPlay';
 import ProtectedRoute from './ProtectedRoute';
 import { inject, observer } from 'mobx-react';
-import { RootStore } from './Store/rootStore';
+import { RootAppStore } from './Store/RootAppStore';
 interface Props {
-  rootStore?: RootStore | undefined;
+  rootAppStore?: RootAppStore | undefined;
 }
 // eslint-disable-next-line react-refresh/only-export-components
-const App: React.FC<Props> = ({ rootStore }) => {
+const App: React.FC<Props> = ({ rootAppStore }) => {
   const location = useLocation();
-  const { themeStore } = rootStore!;
-  const theme = themeStore.theme
+  const { themeStore } = rootAppStore!;
+  const theme = themeStore.theme;
   return (
     <div
       className="main"
@@ -103,4 +103,5 @@ const App: React.FC<Props> = ({ rootStore }) => {
   );
 };
 
-export default inject('rootStore')(observer(App));
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootAppStore')(observer(App));

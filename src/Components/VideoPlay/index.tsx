@@ -22,24 +22,23 @@ import {
   YoutubeVideoDiv,
 } from './styledComp';
 import { inject, observer } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
-
+import { RootAppStore } from '../../Store/rootAppStore';
 interface StoreProps {
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 type Props = StoreProps & WithNavigationProps;
 
 class VideoPlayer extends Component<Props> {
   componentDidMount(): void {
-    const { rootStore } = this.props!;
-    rootStore?.videoPlayStore.getvideos(this.props.param.id);
+    const { rootAppStore } = this.props!;
+    rootAppStore?.videoDetailStore.fetchVideoIndetail(this.props.param.id);
   }
 
   render(): ReactNode {
-    const { rootStore } = this.props!;
-    const { themeStore, saveVideoStore, videoPlayStore } = rootStore!;
+    const { rootAppStore } = this.props!;
+    const { themeStore, saveVideoStore, videoDetailStore } = rootAppStore!;
     const { theme } = themeStore;
-    const { fetchedVideo, embedId } = videoPlayStore;
+    const { fetchedVideos, embedId } = videoDetailStore;
     const {
       savedVideos,
       addVideo,
@@ -49,10 +48,10 @@ class VideoPlayer extends Component<Props> {
       toggleDislike,
     } = saveVideoStore;
 
-    if (!fetchedVideo) return null;
+    if (!fetchedVideos) return null;
 
-    const isSaved = savedVideos.some((v) => v.id === fetchedVideo.id);
-    const reaction = videoReactions.find((r) => r.id === fetchedVideo.id) || {
+    const isSaved = savedVideos.some((v) => v.id === fetchedVideos.id);
+    const reaction = videoReactions.find((r) => r.id === fetchedVideos.id) || {
       liked: false,
       disliked: false,
     };
@@ -75,20 +74,20 @@ class VideoPlayer extends Component<Props> {
 
         <VideoInfo>
           <VideoTitle>
-            <p>{fetchedVideo.title}</p>
+            <p>{fetchedVideos.title}</p>
           </VideoTitle>
 
           <VideoChannelDescription>
             <VideoCountLikeInfo>
               <VideoCountPub>
-                <p>{fetchedVideo.view_count} views</p>
+                <p>{fetchedVideos.view_count} views</p>
                 <LuDot />
-                <p>{fetchedVideo.published_at}</p>
+                <p>{fetchedVideos.published_at}</p>
               </VideoCountPub>
 
               <VideoLikeDisLikeSave>
                 <div
-                  onClick={() => toggleLike(fetchedVideo.id)}
+                  onClick={() => toggleLike(fetchedVideos.id)}
                   style={{ cursor: 'pointer' }}
                 >
                   <BiLike color={reaction.liked ? 'blue' : 'inherit'} />
@@ -97,7 +96,7 @@ class VideoPlayer extends Component<Props> {
                   </b>
                 </div>
                 <div
-                  onClick={() => toggleDislike(fetchedVideo.id)}
+                  onClick={() => toggleDislike(fetchedVideos.id)}
                   style={{ cursor: 'pointer' }}
                 >
                   <BiDislike color={reaction.disliked ? 'red' : 'inherit'} />
@@ -108,8 +107,8 @@ class VideoPlayer extends Component<Props> {
                 <div
                   onClick={() =>
                     isSaved
-                      ? removeVideo(fetchedVideo.id)
-                      : addVideo(fetchedVideo)
+                      ? removeVideo(fetchedVideos.id)
+                      : addVideo(fetchedVideos)
                   }
                   style={{ cursor: 'pointer' }}
                 >
@@ -125,18 +124,18 @@ class VideoPlayer extends Component<Props> {
 
             <VideoDescription>
               <ChannelLogoBox>
-                <img src={fetchedVideo.channel.profile_image_url} />
+                <img src={fetchedVideos.channel.profile_image_url} />
               </ChannelLogoBox>
               <ChannelNameSubCountDes>
                 <div>
                   <ChannelName>
-                    <b>{fetchedVideo.channel.name}</b>
+                    <b>{fetchedVideos.channel.name}</b>
                   </ChannelName>
                   <ChannelSubCount>
-                    {fetchedVideo.channel.subscriber_count} subscribers
+                    {fetchedVideos.channel.subscriber_count} subscribers
                   </ChannelSubCount>
                 </div>
-                <h6>{fetchedVideo.description}</h6>
+                <h6>{fetchedVideos.description}</h6>
               </ChannelNameSubCountDes>
             </VideoDescription>
           </VideoChannelDescription>
@@ -147,4 +146,4 @@ class VideoPlayer extends Component<Props> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default withNavigation(inject('rootStore')(observer(VideoPlayer)));
+export default withNavigation(inject('rootAppStore')(observer(VideoPlayer)));

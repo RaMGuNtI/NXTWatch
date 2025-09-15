@@ -9,5 +9,3 @@ export class ThemeStore {
     this.theme = this.theme === 'light' ? 'dark' : 'light';
   };
 }
-
-export const themeStore = new ThemeStore();

@@ -5,16 +5,16 @@ import { PageSectionName } from '../TrendingPage/styledComp';
 import { HiFire } from 'react-icons/hi';
 import { ThemeProvider } from 'styled-components';
 import { inject, observer } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
+import { RootAppStore } from '../../Store/RootAppStore';
 
 interface Props {
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 
 class SavedVideos extends Component<Props> {
   render() {
-    const { rootStore } = this.props!;
-    const { themeStore, saveVideoStore } = rootStore!;
+    const { rootAppStore } = this.props!;
+    const { themeStore, saveVideoStore } = rootAppStore!;
     const { theme } = themeStore;
     const { savedVideos } = saveVideoStore;
     return (
@@ -45,4 +45,4 @@ class SavedVideos extends Component<Props> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(SavedVideos));
+export default inject('rootAppStore')(observer(SavedVideos));

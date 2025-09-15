@@ -1,17 +1,16 @@
 import { Component } from 'react';
 import { PageNF } from './styledComp';
 import { inject, observer } from 'mobx-react';
-import type { RootStore } from '../../Store/rootStore';
-
+import { RootAppStore } from '../../Store/RootAppStore';
 interface Props {
-  rootStore?: RootStore;
+  rootAppStore?: RootAppStore;
 }
 
 class PageNotFound extends Component<Props> {
   render() {
-    const { rootStore } = this.props;
-    if (!rootStore) return null;
-    const { theme } = rootStore.themeStore;
+    const { rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const { theme } = rootAppStore.themeStore;
 
     return (
       <PageNF
@@ -39,4 +38,4 @@ class PageNotFound extends Component<Props> {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default inject('rootStore')(observer(PageNotFound));
+export default inject('rootAppStore')(observer(PageNotFound));

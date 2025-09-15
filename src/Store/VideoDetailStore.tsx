@@ -9,7 +9,7 @@ export interface VideoDetails extends Video {
 
 type VideoStoreApiStatus = 'pending' | 'success' | 'failure';
 
-export class VideoStore {
+export class VideoDetailStore {
   fetchedVideos: VideoDetails | undefined = undefined;
   apiStatus: VideoStoreApiStatus = 'pending';
   embedId: string = '';
@@ -54,7 +54,9 @@ export class VideoStore {
   setEmbedId(id: string) {
     this.embedId = id;
   }
-  fetchVideoIndetail(id: string) {
-    this.fetchCatVideos(id);
+  fetchVideoIndetail(id: string | undefined) {
+    if (id) this.fetchCatVideos(id);
   }
 }
+
+
