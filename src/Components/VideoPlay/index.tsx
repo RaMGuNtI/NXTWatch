@@ -1,6 +1,6 @@
+// Components/VideoPlayer/index.tsx
 import { Component, type ReactNode } from 'react';
 import { type WithNavigationProps, withNavigation } from '../../withNavigation';
-// import Cookies from 'js-cookie';
 import { BiLike, BiDislike } from 'react-icons/bi';
 import { HiOutlineSaveAs } from 'react-icons/hi';
 import { LuDot } from 'react-icons/lu';
@@ -21,78 +21,37 @@ import {
   YoutubeVideo,
   YoutubeVideoDiv,
 } from './styledComp';
-import { AppContext } from '../../Context/ThemeSaveContext';
-import { videoPlayStore } from '../../Store/videoPlayStore';
-import { observer } from 'mobx-react';
-
-interface VideoDetails {
-  channel: {
-    name: string;
-    profile_image_url: string;
-    subscriber_count: string;
-  };
-  description: string;
-  id: string;
-  published_at: string;
-  thumbnail_url: string;
-  title: string;
-  video_url: string;
-  view_count: string;
+import { inject, observer } from 'mobx-react';
+import { RootAppStore } from '../../Store/rootAppStore';
+interface StoreProps {
+  rootAppStore?: RootAppStore;
 }
+type Props = StoreProps & WithNavigationProps;
 
-interface VideoPlayerState {
-  fetchedVideo?: VideoDetails;
-  embedId: string;
-}
-
-class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
-
-  // state: VideoPlayerState = {
-  //   fetchedVideo: undefined,
-  //   embedId: '',
-  // };
-
-  // fetchData = (): void => {
-  //   fetch(`https://apis.ccbp.in/videos/${this.props.param.id}`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       this.setState({
-  //         fetchedVideo: res.video_details,
-  //         embedId: res.video_details.video_url.split('=')[1],
-  //       });
-  //     });
-  // };
-
+class VideoPlayer extends Component<Props> {
   componentDidMount(): void {
-    // this.fetchData();
-    videoPlayStore.getvideos(this.props.param.id);
+    const { rootAppStore } = this.props!;
+    rootAppStore?.videoDetailStore.fetchVideoIndetail(this.props.param.id);
   }
 
   render(): ReactNode {
-    const ctx = this.context;
-    if (!ctx) return null;
-
+    const { rootAppStore } = this.props!;
+    const { themeStore, saveVideoStore, videoDetailStore } = rootAppStore!;
+    const { theme } = themeStore;
+    const { fetchedVideos, embedId } = videoDetailStore;
     const {
-      theme,
       savedVideos,
       addVideo,
       removeVideo,
       videoReactions,
       toggleLike,
       toggleDislike,
-    } = ctx;
-    const { fetchedVideo, embedId } = videoPlayStore;
-    // const { fetchedVideo, embedId } = this.state;
+    } = saveVideoStore;
 
-    if (!fetchedVideo) return null;
+    if (!fetchedVideos) return null;
 
-    const isSaved = savedVideos.some((v) => v.id === fetchedVideo.id);
-    const reaction = videoReactions.find((r) => r.id === fetchedVideo.id) || {
+    const isSaved = savedVideos.some((v) => v.id === fetchedVideos.id);
+    const reaction = videoReactions.find((r) => r.id === fetchedVideos.id) || {
       liked: false,
       disliked: false,
     };
@@ -102,7 +61,6 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
         className={theme === 'light' ? 'light-theme' : 'dark-theme'}
         style={{ display: 'flex', justifyContent: 'center' }}
       >
-        {/* Video Player */}
         <YoutubeVideoDiv>
           <YoutubeVideo
             src={`https://www.youtube.com/embed/${embedId}`}
@@ -114,23 +72,22 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
           />
         </YoutubeVideoDiv>
 
-        {/* Info Section */}
         <VideoInfo>
           <VideoTitle>
-            <p>{fetchedVideo.title}</p>
+            <p>{fetchedVideos.title}</p>
           </VideoTitle>
 
           <VideoChannelDescription>
             <VideoCountLikeInfo>
               <VideoCountPub>
-                <p>{fetchedVideo.view_count} views</p>
+                <p>{fetchedVideos.view_count} views</p>
                 <LuDot />
-                <p>{fetchedVideo.published_at}</p>
+                <p>{fetchedVideos.published_at}</p>
               </VideoCountPub>
 
               <VideoLikeDisLikeSave>
                 <div
-                  onClick={() => toggleLike(fetchedVideo.id)}
+                  onClick={() => toggleLike(fetchedVideos.id)}
                   style={{ cursor: 'pointer' }}
                 >
                   <BiLike color={reaction.liked ? 'blue' : 'inherit'} />
@@ -139,7 +96,7 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
                   </b>
                 </div>
                 <div
-                  onClick={() => toggleDislike(fetchedVideo.id)}
+                  onClick={() => toggleDislike(fetchedVideos.id)}
                   style={{ cursor: 'pointer' }}
                 >
                   <BiDislike color={reaction.disliked ? 'red' : 'inherit'} />
@@ -150,8 +107,8 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
                 <div
                   onClick={() =>
                     isSaved
-                      ? removeVideo(fetchedVideo.id)
-                      : addVideo(fetchedVideo)
+                      ? removeVideo(fetchedVideos.id)
+                      : addVideo(fetchedVideos)
                   }
                   style={{ cursor: 'pointer' }}
                 >
@@ -167,18 +124,18 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
 
             <VideoDescription>
               <ChannelLogoBox>
-                <img src={fetchedVideo.channel.profile_image_url} />
+                <img src={fetchedVideos.channel.profile_image_url} />
               </ChannelLogoBox>
               <ChannelNameSubCountDes>
                 <div>
                   <ChannelName>
-                    <b>{fetchedVideo.channel.name}</b>
+                    <b>{fetchedVideos.channel.name}</b>
                   </ChannelName>
                   <ChannelSubCount>
-                    {fetchedVideo.channel.subscriber_count} subscribers
+                    {fetchedVideos.channel.subscriber_count} subscribers
                   </ChannelSubCount>
                 </div>
-                <h6>{fetchedVideo.description}</h6>
+                <h6>{fetchedVideos.description}</h6>
               </ChannelNameSubCountDes>
             </VideoDescription>
           </VideoChannelDescription>
@@ -188,5 +145,5 @@ class VideoPlayer extends Component<WithNavigationProps, VideoPlayerState> {
   }
 }
 
-const VideoPlay = withNavigation(observer(VideoPlayer));
-export default VideoPlay;
+// eslint-disable-next-line react-refresh/only-export-components
+export default withNavigation(inject('rootAppStore')(observer(VideoPlayer)));

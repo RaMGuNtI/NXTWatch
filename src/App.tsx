@@ -10,15 +10,17 @@ import { useLocation } from 'react-router-dom';
 import LeftPanelWithNav from './Components/LeftPanel';
 import './App.css';
 import VideoPlay from './Components/VideoPlay';
-import { AppContext } from './Context/ThemeSaveContext';
-import { useContext } from 'react';
 import ProtectedRoute from './ProtectedRoute';
-
-const App = () => {
+import { inject, observer } from 'mobx-react';
+import { RootAppStore } from './Store/RootAppStore';
+interface Props {
+  rootAppStore?: RootAppStore | undefined;
+}
+// eslint-disable-next-line react-refresh/only-export-components
+const App: React.FC<Props> = ({ rootAppStore }) => {
   const location = useLocation();
-  const ctx = useContext(AppContext);
-  if (!ctx) return null;
-  const { theme } = ctx;
+  const { themeStore } = rootAppStore!;
+  const theme = themeStore.theme;
   return (
     <div
       className="main"
@@ -101,4 +103,5 @@ const App = () => {
   );
 };
 
-export default App;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootAppStore')(observer(App));

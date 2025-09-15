@@ -1,23 +1,25 @@
 import { Component } from 'react';
 import IndividualTrendingVideo from '../IndividualTrendingVideo';
-import { AppContext } from '../../Context/ThemeSaveContext';
 import { NoSaveDiv, SavedVidUI } from './styledComp';
 import { PageSectionName } from '../TrendingPage/styledComp';
 import { HiFire } from 'react-icons/hi';
 import { ThemeProvider } from 'styled-components';
+import { inject, observer } from 'mobx-react';
+import { RootAppStore } from '../../Store/RootAppStore';
 
-class SavedVideos extends Component {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
+interface Props {
+  rootAppStore?: RootAppStore;
+}
+
+class SavedVideos extends Component<Props> {
   render() {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme, savedVideos } = ctx;
+    const { rootAppStore } = this.props!;
+    const { themeStore, saveVideoStore } = rootAppStore!;
+    const { theme } = themeStore;
+    const { savedVideos } = saveVideoStore;
     return (
       <ThemeProvider theme={{ mode: theme }}>
-        <SavedVidUI
-
-        >
+        <SavedVidUI>
           <PageSectionName>
             <HiFire color="red" style={{ fontSize: '50px' }} />
             <h1>Saved Videos</h1>
@@ -25,11 +27,16 @@ class SavedVideos extends Component {
 
           {savedVideos.length === 0 ? (
             <NoSaveDiv>
-              <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-saved-videos-img.png" />
+              <img
+                src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-saved-videos-img.png"
+                alt="no saved"
+              />
               <h1>No Saved Posts</h1>
             </NoSaveDiv>
           ) : (
-            savedVideos.map((each) => <IndividualTrendingVideo video={each} />)
+            savedVideos.map((each) => (
+              <IndividualTrendingVideo key={each.id} video={each} />
+            ))
           )}
         </SavedVidUI>
       </ThemeProvider>
@@ -37,4 +44,5 @@ class SavedVideos extends Component {
   }
 }
 
-export default SavedVideos;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootAppStore')(observer(SavedVideos));

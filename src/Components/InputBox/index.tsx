@@ -3,7 +3,7 @@ import { InputSection } from './styledComponent';
 interface InputProps {
   fetchVideos: () => void;
   searchInput: string;
-  setSearchInput: React.Dispatch<React.SetStateAction<string>>;
+  setterInput: (text: string) => void;
 }
 
 const InputElement = (props: InputProps) => {
@@ -13,7 +13,7 @@ const InputElement = (props: InputProps) => {
         placeholder="Search"
         value={props.searchInput}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          props.setSearchInput(e.target.value)
+          props.setterInput(e.target.value)
         }
       />
       <button onClick={() => props.fetchVideos()}>🔍</button>

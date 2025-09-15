@@ -15,7 +15,8 @@ import {
   ErrorMsg,
 } from './styledComp';
 import { Navigate } from 'react-router-dom';
-import { AppContext } from '../../Context/ThemeSaveContext';
+import { observer, inject } from 'mobx-react';
+import { RootAppStore } from '../../Store/RootAppStore';
 interface LoginPageState {
   username: string;
   password: string;
@@ -24,14 +25,10 @@ interface LoginPageState {
   Token: string | undefined;
 }
 
-interface OptionInterFace {
-  method: string;
-  body: string;
-}
 
-class LoginPage extends Component<WithNavigationProps> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
+type Props = WithNavigationProps & { rootAppStore?: RootAppStore };
+
+class LoginPage extends Component<Props> {
   state: LoginPageState = {
     username: '',
     password: '',
@@ -48,31 +45,23 @@ class LoginPage extends Component<WithNavigationProps> {
     this.setState({ password: password });
   };
 
-  submitCredentials = (): void => {
-    const options: OptionInterFace = {
-      method: 'POST',
-      body: JSON.stringify({
-        username: this.state.username,
-        password: this.state.password,
-      }),
-    };
-    fetch('https://apis.ccbp.in/login', options)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status_code === 400) {
-          this.setState({ showError: res.error_msg });
-        } else {
-          Cookies.set('Token', res.jwt_token);
-          this.props.navigate('/');
-        }
-      });
+  handleError = (error: string): void => {
+    this.setState({ showError: error });
+  };
+
+  submitCredentials = async () => {
+    const { loginToNxtWatch } = this.props.rootAppStore!.authStore;
+    const response = await loginToNxtWatch(
+      this.state.username,
+      this.state.password,
+      this.handleError
+    );
+    if (response) this.props.navigate('/');
   };
 
   render() {
-    const ctx = this.context;
-    if (!ctx) return null;
-
-    const { theme } = ctx;
+    const { rootAppStore } = this.props;
+    const theme = rootAppStore!.themeStore.theme;
     if (Cookies.get('Token') !== undefined) {
       return <Navigate to="/" />;
     }
@@ -133,6 +122,8 @@ class LoginPage extends Component<WithNavigationProps> {
   }
 }
 
-const HomeNavigation = withNavigation(LoginPage);
+const HomeNavigation = withNavigation(
+  inject('rootAppStore')(observer(LoginPage))
+);
 
 export default HomeNavigation;
