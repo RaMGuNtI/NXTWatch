@@ -4,7 +4,7 @@ export class NavStore {
   panel = false;
   activeTab: string = '';
   showTimerBox: boolean = false;
-  timerKey: number | null = null;
+  timerKey: NodeJS.Timeout | null = null;
   time: number = 0;
   timerStartNum: number = 1;
   isStarted: boolean = false;
@@ -29,7 +29,7 @@ export class NavStore {
   decrementTime(): void {
     if (this.time > 0) this.time -= 1;
   }
-  setTimerKey(key: number): void {
+  setTimerKey(key: NodeJS.Timeout): void {
     this.timerKey = key;
   }
   incrementTime(): void {
@@ -49,4 +49,3 @@ export class NavStore {
     this.timerStartNum = 1;
   }
 }
-export const navStore = new NavStore();

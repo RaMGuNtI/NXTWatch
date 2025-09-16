@@ -6,7 +6,7 @@ interface Props {
   location: {
     pathname: string;
   };
-  theme: 'light' | 'dark';
+  theme: string;
   icon: ReactNode;
   text: string;
   path: string;

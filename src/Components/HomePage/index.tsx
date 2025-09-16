@@ -7,50 +7,28 @@ import {
 } from './styledComp';
 import Loader from '../Loader/Loader';
 import IndividualVideo from '../IndividualVideo';
-// import { observer } from 'mobx-react';
-// import { Component } from 'react';
-import { AppContext } from '../../Context/ThemeSaveContext';
-// import { homeStore } from '../../Store/homeStore';
 import { ThemeProvider } from 'styled-components';
-import { useState, useEffect, useContext } from 'react';
-import Cookies from 'js-cookie';
+import { useEffect } from 'react';
 import InputElement from '../InputBox';
-interface Video {
-  channel: { name: string; profile_image_url: string };
-  id: string;
-  published_at: string;
-  thumbnail_url: string;
-  title: string;
-  view_count: string;
+import { observer, inject } from 'mobx-react';
+import type { RootAppStore } from '../../Store/RootAppStore';
+interface Props {
+  rootAppStore?: RootAppStore | undefined;
 }
 
-interface FetchedVideos {
-  videos: Video[];
-}
-
-const HomePage = () => {
-  const [searchInput, setSearchInput] = useState<string>('');
-  const [fetchedVideos, setFetchedVideos] = useState<FetchedVideos | null>(
-    null
-  );
-  const [loader, setLoader] = useState(true);
-  const ctx = useContext(AppContext);
-
-  const fetchVideos = () => {
-    setLoader(true);
-    fetch(`https://apis.ccbp.in/videos/all?search=${searchInput}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setFetchedVideos(res);
-        setLoader(false);
-      });
-  };
-
+// eslint-disable-next-line react-refresh/only-export-components
+const HomePage: React.FC<Props> = ({ rootAppStore }) => {
+  const { videoStore, themeStore } = rootAppStore!;
+  const { theme } = themeStore;
+  const {
+    fetchHomepageVideos,
+    searchInput,
+    fetchedVideos,
+    setSearchInput,
+    apiStatus,
+  } = videoStore;
   useEffect(() => {
-    fetchVideos();
+    fetchHomepageVideos();
   }, []);
 
   const renderNotFound = () => (
@@ -69,8 +47,6 @@ const HomePage = () => {
   );
 
   const renderHomePage = () => {
-    if (!ctx) return <div data-testid="ctx">theme not defined</div>;
-    const { theme } = ctx;
     return (
       <HomePageBox>
         <BannerAd data-testid="banner" />
@@ -78,8 +54,8 @@ const HomePage = () => {
           <VideosSection>
             <InputElement
               searchInput={searchInput}
-              setSearchInput={setSearchInput}
-              fetchVideos={fetchVideos}
+              setterInput={setSearchInput}
+              fetchVideos={fetchHomepageVideos}
             />
             <div>
               {fetchedVideos?.videos.length === 0
@@ -92,13 +68,14 @@ const HomePage = () => {
     );
   };
 
-  return loader ? (
-    <div data-testid="loaderdiv">
+  return apiStatus === 'pending' ? (
+    <HomePageBox data-testid="loaderdiv">
       <Loader />
-    </div>
+    </HomePageBox>
   ) : (
     <div data-testid="homepage">{renderHomePage()}</div>
   );
 };
 
-export default HomePage;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootAppStore')(observer(HomePage));

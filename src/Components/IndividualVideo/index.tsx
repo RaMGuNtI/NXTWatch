@@ -10,7 +10,9 @@ import {
   VideoViews,
 } from './styledComp';
 import { Link } from 'react-router-dom';
-import { AppContext } from '../../Context/ThemeSaveContext';
+import { inject, observer } from 'mobx-react';
+import { RootAppStore } from '../../Store/RootAppStore';
+
 interface IndividualVideoInterface {
   video: {
     channel: { name: string; profile_image_url: string };
@@ -20,27 +22,28 @@ interface IndividualVideoInterface {
     title: string;
     view_count: string;
   };
+  rootAppStore?: RootAppStore;
 }
 
 class IndividualVideo extends Component<IndividualVideoInterface> {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
   render() {
-    const { video } = this.props;
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
+    const { video, rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const theme = rootAppStore.themeStore.theme;
+
+    const linkStyle = {
+      textDecoration: 'none',
+      color: theme === 'light' ? '#000' : '#fff',
+    };
+
+    const boxStyle = {
+      backgroundColor: theme === 'light' ? '#fff' : '#181818',
+      color: theme === 'light' ? '#000' : '#fff',
+    };
+
     return (
-      <Link
-        style={{ textDecoration: 'none', color: 'black' }}
-        to={`/videos/${video.id}`}
-      >
-        <VideoBox
-          style={{
-            backgroundColor: theme === 'light' ? '#fff' : '#181818',
-            color: theme === 'light' ? '#000' : '#fff',
-          }}
-        >
+      <Link style={linkStyle} to={`/videos/${video.id}`}>
+        <VideoBox style={boxStyle}>
           <ThumbnailImage src={video.thumbnail_url} alt="Video thumbnail" />
           <AboutVideo>
             <ChannelInfo>
@@ -62,4 +65,5 @@ class IndividualVideo extends Component<IndividualVideoInterface> {
   }
 }
 
-export default IndividualVideo;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootAppStore')(observer(IndividualVideo));

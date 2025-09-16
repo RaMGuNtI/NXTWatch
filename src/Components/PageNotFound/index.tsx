@@ -1,13 +1,17 @@
 import { Component } from 'react';
 import { PageNF } from './styledComp';
-import { AppContext } from '../../Context/ThemeSaveContext';
-class PageNotFound extends Component {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
+import { inject, observer } from 'mobx-react';
+import { RootAppStore } from '../../Store/RootAppStore';
+interface Props {
+  rootAppStore?: RootAppStore;
+}
+
+class PageNotFound extends Component<Props> {
   render() {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
+    const { rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const { theme } = rootAppStore.themeStore;
+
     return (
       <PageNF
         style={{
@@ -16,9 +20,15 @@ class PageNotFound extends Component {
         }}
       >
         {theme === 'light' ? (
-          <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-not-found-light-theme-img.png" />
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/nxt-watch-not-found-light-theme-img.png"
+            alt="not found light"
+          />
         ) : (
-          <img src="https://assets.ccbp.in/frontend/react-js/nxt-watch-not-found-dark-theme-img.png" />
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/nxt-watch-not-found-dark-theme-img.png"
+            alt="not found dark"
+          />
         )}
 
         <h1>Page Not Found !!!</h1>
@@ -27,4 +37,5 @@ class PageNotFound extends Component {
   }
 }
 
-export default PageNotFound;
+// eslint-disable-next-line react-refresh/only-export-components
+export default inject('rootAppStore')(observer(PageNotFound));

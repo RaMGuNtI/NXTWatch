@@ -1,35 +1,23 @@
 import { Component } from 'react';
-// import Cookies from 'js-cookie';
 import { HiFire } from 'react-icons/hi';
 import IndividualTrendingVideo from '../IndividualTrendingVideo';
 import { PageSectionName, TrendingPageUI } from './styledComp';
-import { AppContext } from '../../Context/ThemeSaveContext';
 import Loader from '../Loader/Loader';
-import { trendStore } from '../../Store/trendStore';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import { RootAppStore } from '../../Store/rootAppStore';
 import { ThemeProvider } from 'styled-components';
-class TrendingPage extends Component {
-  static contextType = AppContext;
-  declare context: React.ContextType<typeof AppContext>;
 
-  // fetchData = (): void => {
-  //   trendStore.setLoader(true);
-  //   fetch(`https://apis.ccbp.in/videos/trending`, {
-  //     method: 'GET',
-  //     headers: { Authorization: `Bearer ${Cookies.get('Token')}` },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       trendStore.setFetchedVideos(res);
-  //       trendStore.setLoader(false);
-  //     });
-  // };
+interface Props {
+  rootAppStore?: RootAppStore;
+}
 
+class TrendingPage extends Component<Props> {
   componentDidMount(): void {
-    // this.fetchData();
-    trendStore.getvideos();
+    this.props.rootAppStore?.videoStore.fetchTrendingVideos();
   }
+
   renderTrendingPage = () => {
+    const { fetchedVideos } = this.props.rootAppStore!.videoStore;
     return (
       <TrendingPageUI>
         <PageSectionName>
@@ -37,25 +25,31 @@ class TrendingPage extends Component {
           <h1>Trending</h1>
         </PageSectionName>
         <div>
-          {trendStore.fetchedVideos &&
-            trendStore.fetchedVideos.videos.map((each) => {
-              return <IndividualTrendingVideo video={each} />;
-            })}
+          {fetchedVideos?.videos.map((each) => (
+            <IndividualTrendingVideo key={each.id} video={each} />
+          ))}
         </div>
       </TrendingPageUI>
     );
   };
+
   render() {
-    const ctx = this.context;
-    if (!ctx) return null;
-    const { theme } = ctx;
+    const { rootAppStore } = this.props;
+    if (!rootAppStore) return null;
+    const { themeStore, videoStore } = rootAppStore;
+    const theme = themeStore.theme;
+
     return (
       <ThemeProvider theme={{ mode: theme }}>
-        {trendStore.loader ? <Loader /> : this.renderTrendingPage()}
+        {videoStore.apiStatus === 'pending' ? (
+          <Loader />
+        ) : (
+          this.renderTrendingPage()
+        )}
       </ThemeProvider>
     );
   }
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export default observer(TrendingPage);
+export default inject('rootAppStore')(observer(TrendingPage));
