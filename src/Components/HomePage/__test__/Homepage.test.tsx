@@ -17,13 +17,16 @@
 //   });
 
 //   test('fetching data Works', async () => {
-//     const { fetchedVideos, apiStatus, fetchHomepageVideos } =
-//       rootAppStore.videoStore;
+//     const { apiStatus, fetchHomepageVideos } = rootAppStore.videoStore;
 //     const dummyResponse = {
 //       videos: [
 //         {
 //           id: '1',
-//           channel: { name: 'Dummy Channel', profile_image: 'dummy.jpg' },
+//           channel: {
+//             name: 'Dummy Channel',
+//             profile_image_url: 'dummy.jpg',
+//             subscriber_count: 12,
+//           },
 //           published_at: '2024-01-01',
 //           thumbnail_url: 'thumb.jpg',
 //           title: 'Dummy Video',
@@ -34,7 +37,9 @@
 //     (global.fetch as jest.Mock).mockResolvedValue({
 //       json: jest.fn().mockResolvedValue(dummyResponse),
 //     });
-//     fetchHomepageVideos();
+//     await fetchHomepageVideos();
+//     const { fetchedVideos } = rootAppStore.videoStore;
+//     console.log(fetchedVideos);
 //     expect(fetchedVideos).toEqual(dummyResponse);
 //     expect(apiStatus).toBe('success');
 //   });
@@ -72,20 +77,20 @@
 //     );
 //     const BannerComp = await screen.findByTestId('banner');
 //     const inputSection = await screen.findByTestId('input-section');
-//     const inputBox = screen.getByPlaceholderText('Search');
+//     const inputBox = await screen.getByPlaceholderText('Search');
 //     expect(inputSection).toBeInTheDocument();
 //     expect(BannerComp).toBeInTheDocument();
 //     expect(await screen.findByText('Dummy Video')).toBeInTheDocument();
 //     const closeBannerBtn = screen.getByTestId('close-btn');
 //     fireEvent.click(closeBannerBtn);
 //     expect(BannerComp).not.toBeVisible();
-//     fireEvent.change(inputBox, { target: { value: 'search term' } });
-//     const searchBtn = screen.getByText('🔍');
-//     fireEvent.click(searchBtn);
-//     expect(screen.getByTestId('loader')).toBeInTheDocument();
-//     await waitFor(() =>
-//       expect(screen.queryByTestId('loader')).not.toBeInTheDocument()
-//     );
-//     expect(await screen.findByText('Dummy Video')).toBeInTheDocument();
+//     //     fireEvent.change(inputBox, { target: { value: 'search term' } });
+//     //     const searchBtn = screen.getByText('🔍');
+//     //     fireEvent.click(searchBtn);
+//     //     expect(screen.getByTestId('loader')).toBeInTheDocument();
+//     //     await waitFor(() =>
+//     //       expect(screen.queryByTestId('loader')).not.toBeInTheDocument()
+//     //     );
+//     //     expect(await screen.findByText('Dummy Video')).toBeInTheDocument();
 //   });
 // });

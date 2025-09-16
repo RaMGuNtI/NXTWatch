@@ -1,7 +1,7 @@
 import { AuthStore } from './AuthStore';
 import { NavStore } from './navStore';
-import { SaveVideoStore } from './SaveVideoStore';
-import { ThemeStore } from './ThemeStore';
+import { SaveVideoStore } from './saveVideoStore';
+import { ThemeStore } from './themeStore';
 import { VideoDetailStore } from './VideoDetailStore';
 import { VideoStore } from './VideoStore';
 

@@ -85,8 +85,8 @@ export class VideoStore {
     this.searchInput = text;
   }
 
-  fetchHomepageVideos = () => {
-    this.fetchCatVideos('home', this.searchInput);
+  fetchHomepageVideos = async () => {
+    return this.fetchCatVideos('home', this.searchInput);
   };
   fetchTrendingVideos = () => {
     this.fetchCatVideos('trending');
