@@ -22,7 +22,7 @@ import {
   YoutubeVideoDiv,
 } from './styledComp';
 import { inject, observer } from 'mobx-react';
-import { RootAppStore } from '../../Store/rootAppStore';
+import { RootAppStore } from '../../Store/RootAppStore';
 interface StoreProps {
   rootAppStore?: RootAppStore;
 }

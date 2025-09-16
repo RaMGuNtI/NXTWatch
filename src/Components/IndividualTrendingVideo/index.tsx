@@ -9,7 +9,7 @@ import {
 } from './styledComp';
 import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import { RootAppStore } from '../../Store/rootAppStore';
+import { RootAppStore } from '../../Store/RootAppStore';
 interface IndividualVideoInterface {
   video: {
     channel: { name: string; profile_image_url: string };

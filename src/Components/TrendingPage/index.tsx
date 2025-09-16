@@ -4,7 +4,7 @@ import IndividualTrendingVideo from '../IndividualTrendingVideo';
 import { PageSectionName, TrendingPageUI } from './styledComp';
 import Loader from '../Loader/Loader';
 import { inject, observer } from 'mobx-react';
-import { RootAppStore } from '../../Store/rootAppStore';
+import { RootAppStore } from '../../Store/RootAppStore';
 import { ThemeProvider } from 'styled-components';
 
 interface Props {
